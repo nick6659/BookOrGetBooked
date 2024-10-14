@@ -4,7 +4,8 @@ using BookOrGetBooked.Infrastructure.Data.Repositories;
 using BookOrGetBooked.Infrastructure.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using BookOrGetBooked.API.Mappings; // Make sure to include the namespace for your mappings
+using BookOrGetBooked.API.Mappings;
+using BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices;
 
 namespace BookOrGetBooked.API
 {
@@ -23,6 +24,13 @@ namespace BookOrGetBooked.API
             // Dependency Injection for repositories and services
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IBookingService, BookingService>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+            builder.Services.AddScoped<IServiceService, ServiceService>();
+
+            // Register only the centralized DataSeederService
+            builder.Services.AddScoped<DataSeederService>();
 
             // Add AutoMapper and register the base profile
             builder.Services.AddAutoMapper(typeof(MappingProfileBase));
@@ -34,6 +42,19 @@ namespace BookOrGetBooked.API
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+
+            // Apply migrations and seed data
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                // Apply migrations first
+                dbContext.Database.Migrate();
+
+                // Call centralized DataSeederService to seed all necessary data
+                var dataSeeder = scope.ServiceProvider.GetRequiredService<DataSeederService>();
+                dataSeeder.SeedAll();  // This triggers all the individual seed services
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

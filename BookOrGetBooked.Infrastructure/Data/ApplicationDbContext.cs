@@ -11,5 +11,9 @@ namespace BookOrGetBooked.Infrastructure.Data
         }
 
         public DbSet<Booking> Bookings { get; set; }
+        public DbSet<Currency> Currencies { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Service> Services { get; set; }
+
     }
 }

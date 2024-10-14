@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookOrGetBooked.App", "BookOrGetBooked.App\BookOrGetBooked.App.csproj", "{4D85BC5D-1300-43D7-A3E8-223C3D1655D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookOrGetBooked.App", "BookOrGetBooked.App\BookOrGetBooked.App.csproj", "{4D85BC5D-1300-43D7-A3E8-223C3D1655D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookOrGetBooked.API", "BookOrGetBooked.API\BookOrGetBooked.API.csproj", "{6B39B925-A64B-48D6-BF11-14666947C13A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookOrGetBooked.API", "BookOrGetBooked.API\BookOrGetBooked.API.csproj", "{6B39B925-A64B-48D6-BF11-14666947C13A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookOrGetBooked.Core", "BookOrGetBooked.Core\BookOrGetBooked.Core.csproj", "{DFCBE554-F8AD-48D2-8625-16EAEA88A4AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookOrGetBooked.Core", "BookOrGetBooked.Core\BookOrGetBooked.Core.csproj", "{DFCBE554-F8AD-48D2-8625-16EAEA88A4AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookOrGetBooked.Infrastructure", "BookOrGetBooked.Infrastructure\BookOrGetBooked.Infrastructure.csproj", "{62990961-E63F-447A-AB45-841796736A7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookOrGetBooked.Infrastructure", "BookOrGetBooked.Infrastructure\BookOrGetBooked.Infrastructure.csproj", "{62990961-E63F-447A-AB45-841796736A7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookOrGetBooked.Shared", "BookOrGetBooked.Shared\BookOrGetBooked.Shared.csproj", "{0A8A45B3-732F-40AD-AF95-1DD2FE61F179}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookOrGetBooked.Shared", "BookOrGetBooked.Shared\BookOrGetBooked.Shared.csproj", "{0A8A45B3-732F-40AD-AF95-1DD2FE61F179}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookOrGetBooked.UI.Shared", "BookOrGetBooked.UI.Shared\BookOrGetBooked.UI.Shared.csproj", "{2D94BDE5-7E03-4B58-9B34-D14A2693451F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{0A8A45B3-732F-40AD-AF95-1DD2FE61F179}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A8A45B3-732F-40AD-AF95-1DD2FE61F179}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A8A45B3-732F-40AD-AF95-1DD2FE61F179}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D94BDE5-7E03-4B58-9B34-D14A2693451F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D94BDE5-7E03-4B58-9B34-D14A2693451F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D94BDE5-7E03-4B58-9B34-D14A2693451F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D94BDE5-7E03-4B58-9B34-D14A2693451F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

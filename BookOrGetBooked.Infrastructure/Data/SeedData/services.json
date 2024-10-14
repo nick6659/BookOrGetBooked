@@ -1,0 +1,26 @@
+[
+  {
+    "Id": 1,
+    "Name": "Consultation",
+    "Description": "A 30-minute consultation session",
+    "Price": 50.0,
+    "ProviderId": 1,
+    "CurrencyId": 4
+  },
+  {
+    "Id": 2,
+    "Name": "Full Service",
+    "Description": "Complete service package",
+    "Price": 200.0,
+    "ProviderId": 1,
+    "CurrencyId": 4
+  },
+  {
+    "Id": 3,
+    "Name": "Follow-up",
+    "Description": "A follow-up session to discuss progress",
+    "Price": 80.0,
+    "ProviderId": 1,
+    "CurrencyId": 4
+  }
+]

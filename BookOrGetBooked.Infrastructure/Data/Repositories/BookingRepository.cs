@@ -14,7 +14,7 @@ namespace BookOrGetBooked.Infrastructure.Data.Repositories
             _context = context;
         }
 
-        public async Task<Booking> GetBookingByIdAsync(int bookingId)
+        public async Task<Booking?> GetBookingByIdAsync(int bookingId)
         {
             return await _context.Bookings.FindAsync(bookingId);
         }

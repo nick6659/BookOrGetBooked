@@ -1,0 +1,26 @@
+[
+  {
+    "Code": "USD",
+    "Name": "United States Dollar",
+    "Symbol": "$",
+    "IsEnabled": true
+  },
+  {
+    "Code": "EUR",
+    "Name": "Euro",
+    "Symbol": "€",
+    "IsEnabled": true
+  },
+  {
+    "Code": "GBP",
+    "Name": "British Pound",
+    "Symbol": "£",
+    "IsEnabled": true
+  },
+  {
+    "Code": "DKK",
+    "Name": "Danish Krone",
+    "Symbol": "kr",
+    "IsEnabled": true
+  }
+]

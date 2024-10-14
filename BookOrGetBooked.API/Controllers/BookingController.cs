@@ -22,11 +22,11 @@ namespace BookOrGetBooked.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState); // Ensure validation for request data
+                return BadRequest(ModelState);
             }
 
             var result = await _bookingService.CreateBookingAsync(bookingRequest);
-            return Ok(result);  // Returns BookingResponseDTO
+            return Ok(result);
         }
 
         // GET: api/booking/{id}
@@ -34,11 +34,14 @@ namespace BookOrGetBooked.API.Controllers
         public async Task<IActionResult> GetBookingById(int id)
         {
             var result = await _bookingService.GetBookingByIdAsync(id);
-            if (result == null)
+
+            if (!result.IsSuccess)
             {
-                return NotFound();
+                return NotFound(new { message = result.Error });
             }
-            return Ok(result);  // Can return BookingResponseDTO
+
+            return Ok(result.Data);
         }
+
     }
 }
