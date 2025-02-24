@@ -1,12 +1,13 @@
 ﻿using BookOrGetBooked.Core.Models;
+using BookOrGetBooked.Shared.Filters;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BookOrGetBooked.Core.Interfaces
 {
-    public interface IServiceRepository
+    public interface IServiceRepository : IGenericRepository<Service>
     {
-        Task<bool> ServiceExistsAsync(int serviceId);
 
-        Task<Service?> GetServiceByIdAsync(int serviceId);
+        Task<IEnumerable<Service>> GetServicesAsync(ServiceFilterParameters filters);
     }
 }

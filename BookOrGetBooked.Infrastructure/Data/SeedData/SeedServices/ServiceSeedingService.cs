@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using BookOrGetBooked.Core.Models;
 using System.Reflection;
+using BookOrGetBooked.Shared.DTOs;
 
 namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
 {
@@ -15,7 +16,7 @@ namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
 
         public void SeedServicesFromJson()
         {
-            if (!_context.Services.Any())  // Seed only if no services exist
+            if (!_context.Services.Any()) // Seed only if no services exist
             {
                 var assembly = Assembly.GetExecutingAssembly();
                 var resourceName = "BookOrGetBooked.Infrastructure.Data.SeedData.services.json";
@@ -30,10 +31,14 @@ namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
                     using (var reader = new StreamReader(stream))
                     {
                         var servicesJson = reader.ReadToEnd();
-                        var services = JsonConvert.DeserializeObject<List<Service>>(servicesJson);
+                        var serviceDtos = JsonConvert.DeserializeObject<List<ServiceCreateDTO>>(servicesJson);
 
-                        if (services != null)
+                        if (serviceDtos != null)
                         {
+                            var services = serviceDtos.Select(dto =>
+                                Service.Create(dto.Name, dto.Description, dto.Price, dto.CurrencyId, dto.ProviderId)
+                            ).ToList();
+
                             _context.Services.AddRange(services);
                             _context.SaveChanges();
                         }

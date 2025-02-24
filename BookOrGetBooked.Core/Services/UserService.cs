@@ -1,44 +1,52 @@
 ﻿using AutoMapper;
 using BookOrGetBooked.Core.Interfaces;
+using BookOrGetBooked.Core.Models;
 using BookOrGetBooked.Shared.DTOs;
 using BookOrGetBooked.Shared.Utilities;
-using System.Threading.Tasks;
 
 namespace BookOrGetBooked.Core.Services
 {
-    public class UserService : IUserService
+    public class UserService : GenericService<User, UserCreateDTO, UserResponseDTO, UserUpdateDTO>, IUserService
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IUserTypeService _userTypeService; // For validating UserType
 
-        public UserService(IUserRepository userRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository, IMapper mapper, IUserTypeService userTypeService)
+            : base(userRepository, mapper)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _userTypeService = userTypeService;
         }
 
-        // Implementing UserExistsAsync method
-        public async Task<Result<bool>> UserExistsAsync(int userId)
+        public override async Task<Result<UserResponseDTO>> CreateAsync(UserCreateDTO userCreateDto)
         {
-            var userExists = await _userRepository.UserExistsAsync(userId);
-            if (!userExists)
-            {
-                return Result<bool>.Failure("User not found");
-            }
-            return Result<bool>.Success(true);
-        }
+            // Validate UserType
+            var userTypeExists = await _userTypeService.ExistsAsync(userCreateDto.UserTypeId);
 
-        // GetUserByIdAsync method
-        public async Task<Result<UserResponseDTO>> GetUserByIdAsync(int userId)
-        {
-            var user = await _userRepository.GetUserByIdAsync(userId);
-            if (user == null)
+            if (!userTypeExists.Data)
             {
-                return Result<UserResponseDTO>.Failure("User not found");
+                return Result<UserResponseDTO>.Failure(ErrorCodes.Validation.InvalidInput, "Invalid User Type ID.");
             }
 
-            var userDTO = _mapper.Map<UserResponseDTO>(user);
-            return Result<UserResponseDTO>.Success(userDTO);
+            // Create the User entity
+            var user = User.Create(userCreateDto.Name, userCreateDto.Email, userCreateDto.UserTypeId);
+
+            // Add Phone Numbers
+            foreach (var phoneNumberDto in userCreateDto.PhoneNumbers)
+            {
+                var phoneNumber = PhoneNumber.Create(phoneNumberDto.Prefix, phoneNumberDto.Number, phoneNumberDto.UserId);
+                user.PhoneNumbers.Add(phoneNumber);
+            }
+
+            // Save the User to the repository
+            await _userRepository.AddAsync(user);
+
+            // Map to response DTO
+            var userResponseDto = _mapper.Map<UserResponseDTO>(user);
+
+            return Result<UserResponseDTO>.Success(userResponseDto);
         }
     }
 }

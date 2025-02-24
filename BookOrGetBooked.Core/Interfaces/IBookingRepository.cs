@@ -1,10 +1,10 @@
 ﻿using BookOrGetBooked.Core.Models;
+using BookOrGetBooked.Shared.Filters;
 
 namespace BookOrGetBooked.Core.Interfaces
 {
-    public interface IBookingRepository
+    public interface IBookingRepository : IGenericRepository<Booking>
     {
-        Task<Booking?> GetBookingByIdAsync(int bookingId);
-        Task AddBookingAsync(Booking booking);
+        Task<IEnumerable<Booking>> GetBookingsAsync(BookingFilterParameters filters);
     }
 }

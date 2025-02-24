@@ -23,25 +23,60 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("BookerId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProviderId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("ServiceId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("StatusId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("TimeSlot")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BookerId");
+
+                    b.HasIndex("ProviderId");
+
                     b.HasIndex("ServiceId");
+
+                    b.HasIndex("StatusId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Bookings");
+                });
+
+            modelBuilder.Entity("BookOrGetBooked.Core.Models.BookingStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsSystemDefined")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.ToTable("BookingStatuses");
                 });
 
             modelBuilder.Entity("BookOrGetBooked.Core.Models.Currency", b =>
@@ -70,6 +105,30 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                     b.ToTable("Currencies");
                 });
 
+            modelBuilder.Entity("BookOrGetBooked.Core.Models.PhoneNumber", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Prefix")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PhoneNumber");
+                });
+
             modelBuilder.Entity("BookOrGetBooked.Core.Models.Service", b =>
                 {
                     b.Property<int>("Id")
@@ -79,9 +138,17 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                     b.Property<int>("CurrencyId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsInactive")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -116,29 +183,86 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("UserTypeId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserTypeId");
 
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("BookOrGetBooked.Core.Models.UserType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserTypes");
+                });
+
             modelBuilder.Entity("BookOrGetBooked.Core.Models.Booking", b =>
                 {
+                    b.HasOne("BookOrGetBooked.Core.Models.User", "Booker")
+                        .WithMany()
+                        .HasForeignKey("BookerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BookOrGetBooked.Core.Models.User", "Provider")
+                        .WithMany()
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("BookOrGetBooked.Core.Models.Service", "Service")
                         .WithMany("Bookings")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BookOrGetBooked.Core.Models.User", "User")
-                        .WithMany("Bookings")
-                        .HasForeignKey("UserId")
+                    b.HasOne("BookOrGetBooked.Core.Models.BookingStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("BookOrGetBooked.Core.Models.User", null)
+                        .WithMany("Bookings")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Booker");
+
+                    b.Navigation("Provider");
+
                     b.Navigation("Service");
+
+                    b.Navigation("Status");
+                });
+
+            modelBuilder.Entity("BookOrGetBooked.Core.Models.BookingStatus", b =>
+                {
+                    b.HasOne("BookOrGetBooked.Core.Models.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId");
+
+                    b.Navigation("CreatedByUser");
+                });
+
+            modelBuilder.Entity("BookOrGetBooked.Core.Models.PhoneNumber", b =>
+                {
+                    b.HasOne("BookOrGetBooked.Core.Models.User", "User")
+                        .WithMany("PhoneNumbers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -152,7 +276,7 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("BookOrGetBooked.Core.Models.User", "Provider")
-                        .WithMany("ProvidedServices")
+                        .WithMany("Services")
                         .HasForeignKey("ProviderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -160,6 +284,17 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                     b.Navigation("Currency");
 
                     b.Navigation("Provider");
+                });
+
+            modelBuilder.Entity("BookOrGetBooked.Core.Models.User", b =>
+                {
+                    b.HasOne("BookOrGetBooked.Core.Models.UserType", "UserType")
+                        .WithMany("Users")
+                        .HasForeignKey("UserTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserType");
                 });
 
             modelBuilder.Entity("BookOrGetBooked.Core.Models.Service", b =>
@@ -171,7 +306,14 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                 {
                     b.Navigation("Bookings");
 
-                    b.Navigation("ProvidedServices");
+                    b.Navigation("PhoneNumbers");
+
+                    b.Navigation("Services");
+                });
+
+            modelBuilder.Entity("BookOrGetBooked.Core.Models.UserType", b =>
+                {
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

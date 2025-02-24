@@ -8,19 +8,19 @@
   {
     "Code": "EUR",
     "Name": "Euro",
-    "Symbol": "€",
+    "Symbol": "â‚¬",
     "IsEnabled": true
   },
   {
     "Code": "GBP",
     "Name": "British Pound",
-    "Symbol": "£",
+    "Symbol": "Â£",
     "IsEnabled": true
   },
   {
     "Code": "DKK",
     "Name": "Danish Krone",
-    "Symbol": "kr",
+    "Symbol": "kr.",
     "IsEnabled": true
   }
 ]

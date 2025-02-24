@@ -1,14 +1,38 @@
 [
   {
     "Id": 1,
-    "Name": "John Doe",
-    "Email": "johndoe@example.com",
-    "PhoneNumber": "123456789"
+    "UserTypeId": 1,
+    "Name": "Nicklas Selsmark",
+    "Email": "ns@selution.dk",
+    "PhoneNumbers": [
+      {
+        "Prefix": "+45",
+        "Number": "30515104"
+      }
+    ]
   },
   {
     "Id": 2,
+    "UserTypeId": 2,
+    "Name": "John Doe",
+    "Email": "johndoe@example.com",
+    "PhoneNumbers": [
+      {
+        "Prefix": "+45",
+        "Number": "12345678"
+      }
+    ]
+  },
+  {
+    "Id": 3,
+    "UserTypeId": 3,
     "Name": "Jane Smith",
     "Email": "janesmith@example.com",
-    "PhoneNumber": "987654321"
+    "PhoneNumbers": [
+      {
+        "Prefix": "+44",
+        "Number": "987654321"
+      }
+    ]
   }
 ]

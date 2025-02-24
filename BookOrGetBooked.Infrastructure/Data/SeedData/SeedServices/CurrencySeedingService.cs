@@ -19,7 +19,7 @@ namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
             {
                 var assembly = Assembly.GetExecutingAssembly();
 
-                var resourceName = "BookOrGetBooked.Infrastructure.Data.SeedData.currencies.json";
+                var resourceName = "BookOrGetBooked.Infrastructure.Data.SeedData.currencies_utf8.json";
 
                 using (var stream = assembly.GetManifestResourceStream(resourceName))
                 {

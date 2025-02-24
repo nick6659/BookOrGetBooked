@@ -1,29 +1,49 @@
 ﻿using BookOrGetBooked.Core.Interfaces;
 using BookOrGetBooked.Core.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
+using BookOrGetBooked.Shared.Filters;
 
 namespace BookOrGetBooked.Infrastructure.Data.Repositories
 {
-    public class ServiceRepository : IServiceRepository
+    public class ServiceRepository : GenericRepository<Service>, IServiceRepository
     {
-        private readonly ApplicationDbContext _context;
+        public ServiceRepository(ApplicationDbContext context) : base(context) { }
 
-        public ServiceRepository(ApplicationDbContext context)
+        public async Task<IEnumerable<Service>> GetServicesAsync(ServiceFilterParameters filters)
         {
-            _context = context;
-        }
+            var query = Query();
 
-        // Check if a service exists by its ID
-        public async Task<bool> ServiceExistsAsync(int serviceId)
-        {
-            return await _context.Services.AnyAsync(s => s.Id == serviceId);
-        }
+            // Include or exclude deleted services
+            if (!filters.IncludeDeleted)
+            {
+                query = query.Where(s => !s.IsDeleted);
+            }
+            else
+            {
+                query = query.IgnoreQueryFilters();
+            }
 
-        // Get a service by its ID
-        public async Task<Service?> GetServiceByIdAsync(int serviceId)
-        {
-            return await _context.Services.FindAsync(serviceId);
+            // Filter by user
+            query = query.Where(s => s.ProviderId == filters.UserId);
+
+            // Filter by IsInactive flag
+            if (filters.IsInactive.HasValue)
+            {
+                query = query.Where(s => s.IsInactive == filters.IsInactive.Value);
+            }
+
+            // Filter by date range
+            if (filters.StartDate.HasValue)
+            {
+                query = query.Where(s => s.Bookings.Any(b => b.TimeSlot >= filters.StartDate.Value));
+            }
+
+            if (filters.EndDate.HasValue)
+            {
+                query = query.Where(s => s.Bookings.Any(b => b.TimeSlot <= filters.EndDate.Value));
+            }
+
+            return await query.ToListAsync();
         }
     }
 }

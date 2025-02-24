@@ -4,7 +4,7 @@
     "Name": "Consultation",
     "Description": "A 30-minute consultation session",
     "Price": 50.0,
-    "ProviderId": 1,
+    "ProviderId": 2,
     "CurrencyId": 4
   },
   {
@@ -12,7 +12,7 @@
     "Name": "Full Service",
     "Description": "Complete service package",
     "Price": 200.0,
-    "ProviderId": 1,
+    "ProviderId": 2,
     "CurrencyId": 4
   },
   {
@@ -20,7 +20,39 @@
     "Name": "Follow-up",
     "Description": "A follow-up session to discuss progress",
     "Price": 80.0,
-    "ProviderId": 1,
+    "ProviderId": 2,
     "CurrencyId": 4
+  },
+  {
+    "Id": 4,
+    "Name": "Premium Package",
+    "Description": "All-inclusive service plan",
+    "Price": 500.0,
+    "ProviderId": 3,
+    "CurrencyId": 2
+  },
+  {
+    "Id": 5,
+    "Name": "Budget Package",
+    "Description": "A cost-effective introductory package",
+    "Price": 100.0,
+    "ProviderId": 3,
+    "CurrencyId": 2
+  },
+  {
+    "Id": 6,
+    "Name": "Online Consultation",
+    "Description": "Virtual consultation session via video call",
+    "Price": 40.0,
+    "ProviderId": 3,
+    "CurrencyId": 2
+  },
+  {
+    "Id": 7,
+    "Name": "Express Service",
+    "Description": "Fast turnaround for urgent requests",
+    "Price": 150.0,
+    "ProviderId": 3,
+    "CurrencyId": 2
   }
 ]

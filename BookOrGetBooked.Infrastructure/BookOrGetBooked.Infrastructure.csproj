@@ -7,13 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Data\SeedData\currencies.json" />
+    <None Remove="Data\SeedData\bookingstatuses.json" />
+    <None Remove="Data\SeedData\currencies_utf8.json" />
+    <None Remove="Data\SeedData\phonenumbers.json" />
     <None Remove="Data\SeedData\services.json" />
     <None Remove="Data\SeedData\users.json" />
+    <None Remove="Data\SeedData\usertypes.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Data\SeedData\currencies.json" />
+    <EmbeddedResource Include="Data\SeedData\bookingstatuses.json" />
+    <EmbeddedResource Include="Data\SeedData\currencies_utf8.json" />
     <EmbeddedResource Include="Data\SeedData\services.json" />
     <EmbeddedResource Include="Data\SeedData\users.json" />
   </ItemGroup>
@@ -31,6 +35,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookOrGetBooked.Core\BookOrGetBooked.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data\SeedData\phonenumbers.json" />
+    <EmbeddedResource Include="Data\SeedData\usertypes.json" />
   </ItemGroup>
 
 </Project>

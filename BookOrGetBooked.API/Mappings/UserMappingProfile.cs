@@ -9,7 +9,7 @@ namespace BookOrGetBooked.API.Mappings
         {
             // Mapping from User to UserResponseDTO
             CreateMap<User, UserResponseDTO>()
-                .ForMember(dest => dest.ProvidedServices, opt => opt.MapFrom(src => src.ProvidedServices))
+                .ForMember(dest => dest.ProvidedServices, opt => opt.MapFrom(src => src.Services))
                 .ForMember(dest => dest.Bookings, opt => opt.MapFrom(src => src.Bookings));
 
             // Mapping from Service to ServiceSummaryDTO (to summarize provided services)

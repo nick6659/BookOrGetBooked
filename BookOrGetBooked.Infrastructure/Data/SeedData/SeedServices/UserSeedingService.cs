@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using BookOrGetBooked.Core.Models;
 using System.Reflection;
+using BookOrGetBooked.Shared.DTOs;
 
 namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
 {
@@ -30,10 +31,14 @@ namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
                     using (var reader = new StreamReader(stream))
                     {
                         var usersJson = reader.ReadToEnd();
-                        var users = JsonConvert.DeserializeObject<List<User>>(usersJson);
+                        var userDtos = JsonConvert.DeserializeObject<List<UserCreateDTO>>(usersJson);
 
-                        if (users != null)
+                        if (userDtos != null)
                         {
+                            var users = userDtos.Select(dto =>
+                                User.Create(dto.Name, dto.Email, dto.UserTypeId)
+                            ).ToList();
+
                             _context.Users.AddRange(users);
                             _context.SaveChanges();
                         }

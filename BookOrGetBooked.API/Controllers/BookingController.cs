@@ -1,5 +1,7 @@
 ﻿using BookOrGetBooked.Core.Interfaces;
 using BookOrGetBooked.Shared.DTOs;
+using BookOrGetBooked.Shared.Filters;
+using BookOrGetBooked.Shared.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -18,7 +20,7 @@ namespace BookOrGetBooked.API.Controllers
 
         // POST: api/booking
         [HttpPost]
-        public async Task<IActionResult> CreateBooking([FromBody] BookingRequestDTO bookingRequest)
+        public async Task<IActionResult> CreateBooking([FromBody] BookingCreateDTO bookingRequest)
         {
             if (!ModelState.IsValid)
             {
@@ -33,7 +35,7 @@ namespace BookOrGetBooked.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBookingById(int id)
         {
-            var result = await _bookingService.GetBookingByIdAsync(id);
+            var result = await _bookingService.GetBookingAsync(id);
 
             if (!result.IsSuccess)
             {
@@ -42,6 +44,77 @@ namespace BookOrGetBooked.API.Controllers
 
             return Ok(result.Data);
         }
+
+        [HttpPost("filter")]
+        public async Task<IActionResult> GetBookings([FromBody] BookingFilterParameters filters)
+        {
+            var result = await _bookingService.GetBookingsAsync(filters);
+
+            if (!result.IsSuccess)
+            {
+                if (result.Error != null)
+                {
+                    if (ErrorCodes.Validation.Messages.ContainsKey(result.Error.Code))
+                    {
+                        return BadRequest(result); // Return 400 Bad Request with validation errors
+                    }
+                    if (result.Error.Code == ErrorCodes.Resource.NotFound)
+                    {
+                        return NotFound(result); // Return 404 Not Found
+                    }
+                }
+
+                return StatusCode(500, result); // Return 500 Internal Server Error
+            }
+
+            return Ok(result.Data);
+        }
+
+        // PUT: api/booking/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBooking(int id, [FromBody] BookingUpdateDTO bookingUpdateRequest)
+        {
+            if (id <= 0)
+            {
+                return BadRequest(new { message = "Booking ID is invalid." });
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _bookingService.UpdateBookingAsync(id, bookingUpdateRequest);
+            if (!result.IsSuccess)
+            {
+                if (result.Error != null)
+                {
+                    if (result.Error.Code == ErrorCodes.Resource.NotFound)
+                    {
+                        return NotFound(new { message = result.Error });
+                    }
+                }
+
+                return StatusCode(500, new { message = "An error occurred while updating the booking." });
+            }
+
+            return Ok(result.Data);
+        }
+
+        /*
+        // GET: api/booking
+        public async Task<IActionResult> GetAllBookingsByUserId(int id)
+        {
+            var result = await _bookingService.GetAllBookingsByUserId(id);
+
+            if (!result.IsSuccess)
+            {
+                return NotFound(new { message = result.Error });
+            }
+
+            return Ok(result.Data);
+        }
+        */
 
     }
 }

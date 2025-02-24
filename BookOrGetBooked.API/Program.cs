@@ -28,6 +28,10 @@ namespace BookOrGetBooked.API
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
             builder.Services.AddScoped<IServiceService, ServiceService>();
+            builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
+            builder.Services.AddScoped<ICurrencyService, CurrencyService>();
+            builder.Services.AddScoped<IUserTypeRepository, UserTypeRepository>();
+            builder.Services.AddScoped<IUserTypeService, UserTypeService>();
 
             // Register only the centralized DataSeederService
             builder.Services.AddScoped<DataSeederService>();
