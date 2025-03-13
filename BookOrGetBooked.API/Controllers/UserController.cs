@@ -31,8 +31,13 @@ namespace BookOrGetBooked.API.Controllers
 
         // POST: api/user
         [HttpPost]
-        public async Task<IActionResult> CreateUser(UserCreateDTO userCreateDto)
+        public async Task<IActionResult> CreateUser([FromBody] UserCreateDTO userCreateDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var result = await _userService.CreateAsync(userCreateDto);
 
             if (!result.IsSuccess)

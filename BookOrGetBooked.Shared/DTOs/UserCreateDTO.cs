@@ -1,12 +1,14 @@
-﻿namespace BookOrGetBooked.Shared.DTOs
-{
-    public class UserCreateDTO
-    {
-        public required string Name { get; set; } = string.Empty; // Required user name
-        public required string Email { get; set; } = string.Empty; // Required user email
-        public required int UserTypeId { get; set; } // Foreign Key for UserType
+﻿using BookOrGetBooked.Shared.DTOs;
+using System.ComponentModel.DataAnnotations;
 
-        // Collection of phone numbers to associate with the user
-        public List<PhoneNumberCreateDTO> PhoneNumbers { get; set; } = new List<PhoneNumberCreateDTO>();
-    }
+public class UserCreateDTO
+{
+    [Required(ErrorMessage = "Name is required.")]
+    public string Name { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Email is required.")]
+    [EmailAddress(ErrorMessage = "Invalid email format.")]
+    public string Email { get; set; } = string.Empty;
+
+    public List<PhoneNumberCreateDTO> PhoneNumbers { get; set; } = new List<PhoneNumberCreateDTO>();
 }
