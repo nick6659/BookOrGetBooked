@@ -66,8 +66,13 @@ namespace BookOrGetBooked.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            else
+            {
+                app.UseHttpsRedirection();
+                app.UseHsts();
+            }
 
-            app.UseHttpsRedirection();
+            app.Urls.Add("https://app.bookorgetbooked.com");
 
             app.UseRouting();
 

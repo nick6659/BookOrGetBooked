@@ -7,16 +7,19 @@ namespace BookOrGetBooked.API.Mappings
     {
         public BookingMappingProfile()
         {
-            // Mapping from BookingRequestDTO to Booking (for creating bookings)
-            CreateMap<BookingCreateDTO, Booking>();
+            // Mapping from BookingCreateDTO to Booking (for creating bookings)
+            CreateMap<BookingCreateDTO, Booking>()
+                .ForMember(dest => dest.StatusId, opt => opt.MapFrom(src => 1)); // Default to "Pending"
 
-            // Mapping from Booking to BookingResponseDTO (for returning booking details)
-            CreateMap<Booking, BookingResponseDTO>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+            // Mapping from BookingStatus to BookingStatusSummaryDTO
+            CreateMap<BookingStatus, BookingStatusSummaryDTO>();
+
+            // Mapping from Booking to BookingResponseDTO (AutoMapper automatically maps Status)
+            CreateMap<Booking, BookingResponseDTO>();
 
             // Mapping from BookingUpdateDTO to Booking (for updating bookings)
             CreateMap<BookingUpdateDTO, Booking>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore()); // ID is handled separately
+                .ForMember(dest => dest.Id, opt => opt.Ignore()); // ID should not be updated
         }
     }
 }

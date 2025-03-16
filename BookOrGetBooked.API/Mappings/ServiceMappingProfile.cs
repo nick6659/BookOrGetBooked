@@ -1,14 +1,13 @@
 ﻿using BookOrGetBooked.Core.Models;
 using BookOrGetBooked.Shared.DTOs;
 
-namespace BookOrGetBooked.API.Mappings
+namespace BookOrGetBooked.API.Mappings;
+
+public class ServiceMappingProfile : MappingProfileBase
 {
-    public class ServiceMappingProfile : MappingProfileBase
+    public ServiceMappingProfile()
     {
-        public ServiceMappingProfile()
-        {
-            // Mapping from Service to ServiceResponseDTO
-            CreateMap<Service, ServiceResponseDTO>();
-        }
+        // Mapping from Service to ServiceResponseDTO
+        CreateMap<Service, ServiceResponseDTO>();
     }
 }

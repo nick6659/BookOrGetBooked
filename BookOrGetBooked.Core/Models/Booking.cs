@@ -5,16 +5,16 @@
         public int Id { get; set; }  // Primary key
 
         // The user who made the booking (the booker)
-        public int BookerId { get; set; }
-        public User? Booker { get; set; }
+        public required int BookerId { get; set; }
+        public required User Booker { get; set; }
 
         // The service that is being booked
         public required int ServiceId { get; set; }
-        public Service? Service { get; set; }
+        public required Service? Service { get; set; }
 
-        public DateTime TimeSlot { get; set; }
+        public required DateTime TimeSlot { get; set; }
 
         public required int StatusId { get; set; }
-        public BookingStatus? Status { get; set; }
+        public required BookingStatus Status { get; set; }
     }
 }

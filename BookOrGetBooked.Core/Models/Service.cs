@@ -20,7 +20,7 @@ namespace BookOrGetBooked.Core.Models
         public DateTime? DeletedAt { get; private set; }
         public bool IsInactive { get; private set; } // For temporarily disabling the service
 
-        public ICollection<Booking> Bookings { get; private set; } = new List<Booking>();
+        public ICollection<Booking> Bookings { get; private set; } = [];
 
         private Service(string name, string? description, decimal price, int currencyId, int providerId)
         {
