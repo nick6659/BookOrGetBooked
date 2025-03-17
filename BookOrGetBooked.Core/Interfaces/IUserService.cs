@@ -3,7 +3,7 @@ using BookOrGetBooked.Shared.DTOs;
 
 namespace BookOrGetBooked.Core.Interfaces
 {
-    public interface IUserService : IGenericService<User, UserCreateDTO, UserResponseDTO, UserUpdateDTO>
+    public interface IUserService : IGenericService<User, UserCreateDTO, UserCreatedDTO, UserUpdateDTO>
     {
         
     }

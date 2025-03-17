@@ -1,4 +1,5 @@
-﻿using BookOrGetBooked.Core.Models;
+﻿using AutoMapper;
+using BookOrGetBooked.Core.Models;
 using BookOrGetBooked.Shared.DTOs;
 
 namespace BookOrGetBooked.API.Mappings
@@ -7,16 +8,23 @@ namespace BookOrGetBooked.API.Mappings
     {
         public UserMappingProfile()
         {
-            // Mapping from User to UserResponseDTO
+            // Full User Mapping (when fetching user)
             CreateMap<User, UserResponseDTO>()
                 .ForMember(dest => dest.ProvidedServices, opt => opt.MapFrom(src => src.Services))
-                .ForMember(dest => dest.Bookings, opt => opt.MapFrom(src => src.Bookings));
+                .ForMember(dest => dest.Bookings, opt => opt.MapFrom(src => src.Bookings))
+                .ForMember(dest => dest.PhoneNumbers, opt => opt.MapFrom(src => src.PhoneNumbers));
 
-            // Mapping from Service to ServiceSummaryDTO (to summarize provided services)
+            // User Created Mapping (when returning after user creation)
+            CreateMap<User, UserCreatedDTO>()
+                .ForMember(dest => dest.PhoneNumbers, opt => opt.MapFrom(src => src.PhoneNumbers));
+
+            // Phone Number Mapping
+            CreateMap<PhoneNumber, PhoneNumberResponseDTO>();
+
+            // Provided Services & Bookings
             CreateMap<Service, ServiceSummaryDTO>()
                 .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Name));
 
-            // Mapping from Booking to BookingSummaryDTO (to summarize bookings)
             CreateMap<Booking, BookingSummaryDTO>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
         }

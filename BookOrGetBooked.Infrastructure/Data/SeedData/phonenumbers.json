@@ -1,20 +1,14 @@
 [
   {
-    "Id": 1,
     "Prefix": "+45",
-    "Number": "30515104",
-    "UserId": 1
+    "Number": "30515104"
   },
   {
-    "Id": 1,
     "Prefix": "+45",
-    "Number": "12345678",
-    "UserId": 2
+    "Number": "12345678"
   },
   {
-    "Id": 2,
     "Prefix": "+44",
-    "Number": "987654321",
-    "UserId": 3
+    "Number": "987654321"
   }
 ]

@@ -73,6 +73,8 @@ namespace BookOrGetBooked.API
             }
 
             app.Urls.Add("https://app.bookorgetbooked.com");
+            app.Urls.Add("https://localhost:5001");
+            app.Urls.Add("http://localhost:5000");
 
             app.UseRouting();
 

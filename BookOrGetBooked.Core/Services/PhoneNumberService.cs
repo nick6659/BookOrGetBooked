@@ -25,7 +25,7 @@ namespace BookOrGetBooked.Core.Services
             }
 
             // Create and save the phone number
-            var phoneNumber = PhoneNumber.Create(prefix, number, userId);
+            var phoneNumber = PhoneNumber.Create(prefix, number);
             await _phoneNumberRepository.AddAsync(phoneNumber);
 
             return Result<PhoneNumber>.Success(phoneNumber);
@@ -68,7 +68,7 @@ namespace BookOrGetBooked.Core.Services
             }
 
             // Update the phone number
-            phoneNumber.Update(prefix, number, userId);
+            phoneNumber.Update(prefix, number);
             await _phoneNumberRepository.UpdateAsync(phoneNumber);
 
             return Result<PhoneNumber>.Success(phoneNumber);

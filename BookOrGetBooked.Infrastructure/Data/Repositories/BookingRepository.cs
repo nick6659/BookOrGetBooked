@@ -15,7 +15,8 @@ public class BookingRepository(
     public override async Task<Booking?> GetByIdAsync(int id)
     {
         return await Query()
-            .Include(b => b.Status) // Eagerly load the Status property
+            .Include(b => b.Status)  // Load Status
+            .Include(b => b.Service) // Load the full Service
             .FirstOrDefaultAsync(b => b.Id == id);
     }
 

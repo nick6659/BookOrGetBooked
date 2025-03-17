@@ -46,9 +46,10 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    FirstName = table.Column<string>(type: "TEXT", nullable: false),
+                    LastName = table.Column<string>(type: "TEXT", nullable: false),
                     Email = table.Column<string>(type: "TEXT", nullable: false),
-                    UserTypeId = table.Column<int>(type: "INTEGER", nullable: false)
+                    UserTypeId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -57,8 +58,7 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                         name: "FK_Users_UserTypes_UserTypeId",
                         column: x => x.UserTypeId,
                         principalTable: "UserTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -140,7 +140,6 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    ProviderId = table.Column<int>(type: "INTEGER", nullable: false),
                     BookerId = table.Column<int>(type: "INTEGER", nullable: false),
                     ServiceId = table.Column<int>(type: "INTEGER", nullable: false),
                     TimeSlot = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -161,16 +160,10 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                         column: x => x.ServiceId,
                         principalTable: "Services",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Bookings_Users_BookerId",
                         column: x => x.BookerId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Bookings_Users_ProviderId",
-                        column: x => x.ProviderId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -185,11 +178,6 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                 name: "IX_Bookings_BookerId",
                 table: "Bookings",
                 column: "BookerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Bookings_ProviderId",
-                table: "Bookings",
-                column: "ProviderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_ServiceId",

@@ -1,25 +1,22 @@
-﻿using BookOrGetBooked.Core.Models;
+﻿using BookOrGetBooked.API.Mappings;
+using BookOrGetBooked.Core.Models;
 using BookOrGetBooked.Shared.DTOs;
 
-namespace BookOrGetBooked.API.Mappings
+public class BookingMappingProfile : MappingProfileBase
 {
-    public class BookingMappingProfile : MappingProfileBase
+    public BookingMappingProfile()
     {
-        public BookingMappingProfile()
-        {
-            // Mapping from BookingCreateDTO to Booking (for creating bookings)
-            CreateMap<BookingCreateDTO, Booking>()
-                .ForMember(dest => dest.StatusId, opt => opt.MapFrom(src => 1)); // Default to "Pending"
+        CreateMap<BookingCreateDTO, Booking>()
+            .ForMember(dest => dest.StatusId, opt => opt.MapFrom(src => 1)); // Default to "Pending"
 
-            // Mapping from BookingStatus to BookingStatusSummaryDTO
-            CreateMap<BookingStatus, BookingStatusSummaryDTO>();
+        // Mapping from Booking to BookingResponseDTO
+        CreateMap<Booking, BookingResponseDTO>()
+            .ForMember(dest => dest.Service, opt => opt.MapFrom(src => src.Service)); // Map full Service
 
-            // Mapping from Booking to BookingResponseDTO (AutoMapper automatically maps Status)
-            CreateMap<Booking, BookingResponseDTO>();
+        // Mapping from Service to ServiceResponseDTO
+        CreateMap<Service, ServiceResponseDTO>();
 
-            // Mapping from BookingUpdateDTO to Booking (for updating bookings)
-            CreateMap<BookingUpdateDTO, Booking>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore()); // ID should not be updated
-        }
+        // Mapping from BookingStatus to BookingStatusSummaryDTO
+        CreateMap<BookingStatus, BookingStatusSummaryDTO>();
     }
 }

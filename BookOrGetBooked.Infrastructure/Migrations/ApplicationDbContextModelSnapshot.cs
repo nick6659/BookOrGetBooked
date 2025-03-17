@@ -26,9 +26,6 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                     b.Property<int>("BookerId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("ProviderId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("ServiceId")
                         .HasColumnType("INTEGER");
 
@@ -44,8 +41,6 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BookerId");
-
-                    b.HasIndex("ProviderId");
 
                     b.HasIndex("ServiceId");
 
@@ -105,30 +100,6 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                     b.ToTable("Currencies");
                 });
 
-            modelBuilder.Entity("BookOrGetBooked.Core.Models.PhoneNumber", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Number")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Prefix")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PhoneNumber");
-                });
-
             modelBuilder.Entity("BookOrGetBooked.Core.Models.Service", b =>
                 {
                     b.Property<int>("Id")
@@ -179,11 +150,15 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("UserTypeId")
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("UserTypeId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -208,6 +183,30 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                     b.ToTable("UserTypes");
                 });
 
+            modelBuilder.Entity("PhoneNumber", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Prefix")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PhoneNumber");
+                });
+
             modelBuilder.Entity("BookOrGetBooked.Core.Models.Booking", b =>
                 {
                     b.HasOne("BookOrGetBooked.Core.Models.User", "Booker")
@@ -216,16 +215,10 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("BookOrGetBooked.Core.Models.User", "Provider")
-                        .WithMany()
-                        .HasForeignKey("ProviderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("BookOrGetBooked.Core.Models.Service", "Service")
                         .WithMany("Bookings")
                         .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("BookOrGetBooked.Core.Models.BookingStatus", "Status")
@@ -240,8 +233,6 @@ namespace BookOrGetBooked.Infrastructure.Migrations
 
                     b.Navigation("Booker");
 
-                    b.Navigation("Provider");
-
                     b.Navigation("Service");
 
                     b.Navigation("Status");
@@ -254,17 +245,6 @@ namespace BookOrGetBooked.Infrastructure.Migrations
                         .HasForeignKey("CreatedByUserId");
 
                     b.Navigation("CreatedByUser");
-                });
-
-            modelBuilder.Entity("BookOrGetBooked.Core.Models.PhoneNumber", b =>
-                {
-                    b.HasOne("BookOrGetBooked.Core.Models.User", "User")
-                        .WithMany("PhoneNumbers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BookOrGetBooked.Core.Models.Service", b =>
@@ -288,13 +268,20 @@ namespace BookOrGetBooked.Infrastructure.Migrations
 
             modelBuilder.Entity("BookOrGetBooked.Core.Models.User", b =>
                 {
-                    b.HasOne("BookOrGetBooked.Core.Models.UserType", "UserType")
+                    b.HasOne("BookOrGetBooked.Core.Models.UserType", null)
                         .WithMany("Users")
-                        .HasForeignKey("UserTypeId")
+                        .HasForeignKey("UserTypeId");
+                });
+
+            modelBuilder.Entity("PhoneNumber", b =>
+                {
+                    b.HasOne("BookOrGetBooked.Core.Models.User", "User")
+                        .WithMany("PhoneNumbers")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("UserType");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BookOrGetBooked.Core.Models.Service", b =>

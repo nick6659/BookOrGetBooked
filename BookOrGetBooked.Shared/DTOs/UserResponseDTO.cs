@@ -3,7 +3,8 @@
     public class UserResponseDTO
     {
         public int Id { get; set; }
-        public required string Name { get; set; }
+        public required string FirstName { get; set; }
+        public required string LastName { get; set; }
         public required string Email { get; set; }
 
         public List<PhoneNumberResponseDTO> PhoneNumbers { get; set; } = new List<PhoneNumberResponseDTO>();

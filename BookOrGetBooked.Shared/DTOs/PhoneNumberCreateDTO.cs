@@ -1,9 +1,10 @@
-﻿namespace BookOrGetBooked.Shared.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+public class PhoneNumberCreateDTO
 {
-    public class PhoneNumberCreateDTO
-    {
-        public required int UserId { get; set; } // Associated User ID
-        public required string Prefix { get; set; } = string.Empty; // Country code, e.g., +1
-        public required string Number { get; set; } = string.Empty; // Phone number
-    }
+    [Required(ErrorMessage = "Phone number prefix is required.")]
+    public string Prefix { get; set; } = string.Empty; // Country code, e.g., +1
+
+    [Required(ErrorMessage = "Phone number is required.")]
+    public string Number { get; set; } = string.Empty; // Phone number
 }

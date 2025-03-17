@@ -36,7 +36,7 @@ namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
                         if (userDtos != null)
                         {
                             var users = userDtos.Select(dto =>
-                                User.Create(dto.Name, dto.Email, dto.UserTypeId)
+                                User.Create(dto.FirstName, dto.LastName, dto.Email)
                             ).ToList();
 
                             _context.Users.AddRange(users);

@@ -1,38 +1,32 @@
 [
   {
     "Id": 1,
-    "UserTypeId": 1,
-    "Name": "Nicklas Selsmark",
+    "FirstName": "Nicklas",
+    "LastName": "Selsmark",
     "Email": "ns@selution.dk",
-    "PhoneNumbers": [
-      {
-        "Prefix": "+45",
-        "Number": "30515104"
-      }
-    ]
+    "PhoneNumber": {
+      "Prefix": "+45",
+      "Number": "30515104"
+    }
   },
   {
     "Id": 2,
-    "UserTypeId": 2,
-    "Name": "John Doe",
+    "FirstName": "John",
+    "LastName": "Doe",
     "Email": "johndoe@example.com",
-    "PhoneNumbers": [
-      {
-        "Prefix": "+45",
-        "Number": "12345678"
-      }
-    ]
+    "PhoneNumber": {
+      "Prefix": "+45",
+      "Number": "12345678"
+    }
   },
   {
     "Id": 3,
-    "UserTypeId": 3,
-    "Name": "Jane Smith",
+    "FirstName": "Jane",
+    "LastName": "Smith",
     "Email": "janesmith@example.com",
-    "PhoneNumbers": [
-      {
-        "Prefix": "+44",
-        "Number": "987654321"
-      }
-    ]
+    "PhoneNumber": {
+      "Prefix": "+44",
+      "Number": "987654321"
+    }
   }
 ]

@@ -6,47 +6,33 @@ using BookOrGetBooked.Shared.Utilities;
 
 namespace BookOrGetBooked.Core.Services
 {
-    public class UserService : GenericService<User, UserCreateDTO, UserResponseDTO, UserUpdateDTO>, IUserService
+    public class UserService : GenericService<User, UserCreateDTO, UserCreatedDTO, UserUpdateDTO>, IUserService
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        private readonly IUserTypeService _userTypeService; // For validating UserType
 
-        public UserService(IUserRepository userRepository, IMapper mapper, IUserTypeService userTypeService)
+        public UserService(IUserRepository userRepository, IMapper mapper)
             : base(userRepository, mapper)
         {
             _userRepository = userRepository;
             _mapper = mapper;
-            _userTypeService = userTypeService;
         }
 
-        public override async Task<Result<UserResponseDTO>> CreateAsync(UserCreateDTO userCreateDto)
+        public override async Task<Result<UserCreatedDTO>> CreateAsync(UserCreateDTO userCreateDto)
         {
-            // Validate UserType
-            var userTypeExists = await _userTypeService.ExistsAsync(userCreateDto.UserTypeId);
+            var user = User.Create(userCreateDto.FirstName, userCreateDto.LastName, userCreateDto.Email);
 
-            if (!userTypeExists.Data)
-            {
-                return Result<UserResponseDTO>.Failure(ErrorCodes.Validation.InvalidInput, "Invalid User Type ID.");
-            }
+            var phoneNumberDto = userCreateDto.PhoneNumber;
+            var phoneNumber = PhoneNumber.Create(phoneNumberDto.Prefix, phoneNumberDto.Number);
+            user.PhoneNumbers.Add(phoneNumber);
 
-            // Create the User entity
-            var user = User.Create(userCreateDto.Name, userCreateDto.Email, userCreateDto.UserTypeId);
-
-            // Add Phone Numbers
-            foreach (var phoneNumberDto in userCreateDto.PhoneNumbers)
-            {
-                var phoneNumber = PhoneNumber.Create(phoneNumberDto.Prefix, phoneNumberDto.Number, phoneNumberDto.UserId);
-                user.PhoneNumbers.Add(phoneNumber);
-            }
-
-            // Save the User to the repository
             await _userRepository.AddAsync(user);
 
-            // Map to response DTO
-            var userResponseDto = _mapper.Map<UserResponseDTO>(user);
+            // Convert to UserCreatedDTO instead of UserResponseDTO
+            var userCreatedDto = _mapper.Map<UserCreatedDTO>(user);
 
-            return Result<UserResponseDTO>.Success(userResponseDto);
+            return Result<UserCreatedDTO>.Success(userCreatedDto);
         }
+
     }
 }

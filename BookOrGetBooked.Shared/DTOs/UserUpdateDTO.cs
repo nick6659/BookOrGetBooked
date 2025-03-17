@@ -1,10 +1,11 @@
-﻿namespace BookOrGetBooked.Shared.DTOs
+﻿using BookOrGetBooked.Shared.DTOs;
+
+public class UserUpdateDTO
 {
-    public class UserUpdateDTO
-    {
-        public required string Name { get; set; }
-        public required string Email { get; set; }
-        public required int UserTypeId { get; set; }
-        public ICollection<PhoneNumberResponseDTO> PhoneNumbers { get; set; } = new List<PhoneNumberResponseDTO>();
-    }
+    public required string FirstName { get; set; }
+    public required string LastName { get; set; }
+    public required string Email { get; set; }
+
+    // Allow multiple phone numbers later
+    public ICollection<PhoneNumberResponseDTO> PhoneNumbers { get; set; } = new List<PhoneNumberResponseDTO>();
 }

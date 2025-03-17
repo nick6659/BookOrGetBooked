@@ -35,19 +35,22 @@ namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
 
                         if (phoneNumberDtos != null)
                         {
-                            var phoneNumbers = phoneNumberDtos.Select(dto =>
+                            // Fetch all users
+                            var users = _context.Users.ToList();
+
+                            var phoneNumbers = phoneNumberDtos.Select((dto, index) =>
                             {
-                                // Ensure that the UserId exists in the Users table
-                                var userExists = _context.Users.Any(u => u.Id == dto.UserId);
-                                if (!userExists)
+                                // Assign phone numbers to users in order (you may want a better way)
+                                var user = users.ElementAtOrDefault(index);
+                                if (user == null)
                                 {
-                                    throw new InvalidOperationException(
-                                        $"User with ID {dto.UserId} does not exist in the Users table."
-                                    );
+                                    throw new InvalidOperationException($"Not enough users in the database for phone numbers.");
                                 }
 
                                 // Use factory method to create the PhoneNumber
-                                return PhoneNumber.Create(dto.Prefix, dto.Number, dto.UserId);
+                                var phoneNumber = PhoneNumber.Create(dto.Prefix, dto.Number);
+                                user.PhoneNumbers.Add(phoneNumber); // Associate phone number with user
+                                return phoneNumber;
                             }).ToList();
 
                             _context.Set<PhoneNumber>().AddRange(phoneNumbers);
