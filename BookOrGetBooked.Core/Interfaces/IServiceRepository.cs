@@ -7,7 +7,7 @@ namespace BookOrGetBooked.Core.Interfaces
 {
     public interface IServiceRepository : IGenericRepository<Service>
     {
-
         Task<IEnumerable<Service>> GetServicesAsync(ServiceFilterParameters filters);
+        Task<IEnumerable<Service>> GetServicesWithinDistanceAsync(ServiceFilterParameters filters, double userLat, double userLon);
     }
 }

@@ -48,6 +48,26 @@ namespace BookOrGetBooked.API.Controllers
             return Ok(result.Data);
         }
 
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterUser([FromBody] UserCreateDTO userCreateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _userService.CreateAsync(userCreateDto);
+
+            if (!result.IsSuccess)
+            {
+                return BadRequest(new { message = result.Error });
+            }
+
+            string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+
+            return Ok(new { token, user = result.Data });
+        }
+
         /*
         // GET: api/user/exists/{id}
         [HttpGet("exists/{id}")]

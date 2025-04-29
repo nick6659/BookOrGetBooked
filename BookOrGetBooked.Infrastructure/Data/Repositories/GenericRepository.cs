@@ -10,7 +10,7 @@ namespace BookOrGetBooked.Infrastructure.Data.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly ApplicationDbContext _context;
+        protected readonly ApplicationDbContext _context;
         private readonly DbSet<T> _dbSet;
 
         public GenericRepository(ApplicationDbContext context)

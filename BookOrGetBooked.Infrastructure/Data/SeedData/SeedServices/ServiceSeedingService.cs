@@ -16,7 +16,7 @@ namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
 
         public void SeedServicesFromJson()
         {
-            if (!_context.Services.Any()) // Seed only if no services exist
+            if (!_context.Services.Any())
             {
                 var assembly = Assembly.GetExecutingAssembly();
                 var resourceName = "BookOrGetBooked.Infrastructure.Data.SeedData.services.json";
@@ -36,11 +36,15 @@ namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
                         if (serviceDtos != null)
                         {
                             var services = serviceDtos.Select(dto =>
-                                Service.Create(dto.Name, dto.Description, dto.Price, dto.CurrencyId, dto.ProviderId)
+                                Service.Create(dto.Name, dto.Description, dto.ServiceTypeId, dto.Price, dto.CurrencyId, "b5d466dd-128d-426b-93ac-1177fe1f26fe")
                             ).ToList();
+
+                            Console.WriteLine($"Seeding {services.Count} services...");
 
                             _context.Services.AddRange(services);
                             _context.SaveChanges();
+
+                            Console.WriteLine("Services seeding completed.");
                         }
                     }
                 }

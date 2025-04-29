@@ -2,10 +2,11 @@
 {
     public class ServiceFilterParameters
     {
-        public int UserId { get; set; }
-        public bool IncludeDeleted { get; set; } = false;
-        public bool? IsInactive { get; set; } = null;
-        public DateTime? StartDate { get; set; } = null;
-        public DateTime? EndDate { get; set; } = null;
+        public int? ServiceTypeId { get; set; }
+        public string? ProviderId { get; set; }
+        public bool? IncludeDeleted { get; set; }
+        public bool? IsInactive { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
     }
 }

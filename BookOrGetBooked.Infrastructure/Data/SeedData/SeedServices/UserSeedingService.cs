@@ -7,6 +7,7 @@ namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
 {
     public class UserSeedingService
     {
+        /*
         private readonly ApplicationDbContext _context;
 
         public UserSeedingService(ApplicationDbContext context)
@@ -46,5 +47,6 @@ namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
                 }
             }
         }
+        */
     }
 }

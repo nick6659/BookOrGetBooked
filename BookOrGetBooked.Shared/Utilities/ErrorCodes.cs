@@ -25,6 +25,7 @@
             public const string OutOfRange = "OUT_OF_RANGE";
             public const string UniqueConstraintViolation = "UNIQUE_CONSTRAINT_VIOLATION";
             public const string InvalidInput = "INVALID_INPUT";
+            public const string DuplicateEntry = "DUPLICATE_ENTRY";
 
             public static readonly Dictionary<string, string> Messages = new()
             {
@@ -33,8 +34,8 @@
                 { InvalidFormat, "The input format is invalid." },
                 { OutOfRange, "The value is out of the acceptable range." },
                 { UniqueConstraintViolation, "The value violates a unique constraint." },
-                { InvalidInput, "The input provided is invalid." }
-            };
+                { InvalidInput, "The input provided is invalid." },
+                { DuplicateEntry, "A record with the same value already exists. Please use a unique value." }            };
         }
 
         public static class Authentication

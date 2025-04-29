@@ -11,25 +11,24 @@
     <None Remove="Data\SeedData\currencies_utf8.json" />
     <None Remove="Data\SeedData\phonenumbers.json" />
     <None Remove="Data\SeedData\services.json" />
+    <None Remove="Data\SeedData\serviceTypes.json" />
     <None Remove="Data\SeedData\users.json" />
-    <None Remove="Data\SeedData\usertypes.json" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Data\SeedData\bookingstatuses.json" />
     <EmbeddedResource Include="Data\SeedData\currencies_utf8.json" />
     <EmbeddedResource Include="Data\SeedData\services.json" />
+    <EmbeddedResource Include="Data\SeedData\serviceTypes.json" />
     <EmbeddedResource Include="Data\SeedData\users.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
@@ -39,7 +38,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Data\SeedData\phonenumbers.json" />
-    <EmbeddedResource Include="Data\SeedData\usertypes.json" />
   </ItemGroup>
 
 </Project>

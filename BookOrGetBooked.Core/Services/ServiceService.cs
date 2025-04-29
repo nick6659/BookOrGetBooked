@@ -12,25 +12,31 @@ public class ServiceService(
     IServiceRepository serviceRepository,
     IMapper mapper,
     ILogger<ServiceService> logger,
-    IUserService userService
+    IGoogleDistanceService googleDistanceService
     ) : IServiceService
 {
     public async Task<Result<ServiceResponseDTO>> CreateServiceAsync(ServiceCreateDTO serviceCreateDto)
     {
         try
         {
-            var provider = await userService.GetByIdAsync(serviceCreateDto.ProviderId);
-            if (provider == null)
-            {
-                return Result<ServiceResponseDTO>.Failure(ErrorCodes.Resource.NotFound, "Provider not found.");
-            }
+            var serviceCoverage = serviceCreateDto.ServiceCoverage != null
+                ? new ServiceCoverage
+                {
+                    MaxDrivingDistanceKm = serviceCreateDto.ServiceCoverage.MaxDrivingDistanceKm,
+                    MaxDrivingTimeMinutes = serviceCreateDto.ServiceCoverage.MaxDrivingTimeMinutes,
+                    ProviderLatitude = serviceCreateDto.ServiceCoverage.ProviderLatitude,
+                    ProviderLongitude = serviceCreateDto.ServiceCoverage.ProviderLongitude
+                }
+                : null;
 
             var service = Service.Create(
                 serviceCreateDto.Name,
                 serviceCreateDto.Description,
+                serviceCreateDto.ServiceTypeId,
                 serviceCreateDto.Price,
                 serviceCreateDto.CurrencyId,
-                serviceCreateDto.ProviderId
+                serviceCreateDto.ProviderId,
+                serviceCoverage
             );
 
             await serviceRepository.AddAsync(service);
@@ -44,6 +50,7 @@ public class ServiceService(
             return Result<ServiceResponseDTO>.Failure(ErrorCodes.Server.InternalServerError);
         }
     }
+
 
     // Check if a service exists
     public async Task<Result<bool>> ServiceExistsAsync(int serviceId)
@@ -88,34 +95,87 @@ public class ServiceService(
     // Retrieve services by filters
     public async Task<Result<IEnumerable<ServiceResponseDTO>>> GetServicesAsync(ServiceFilterParameters filters)
     {
-        try
+        var services = await serviceRepository.GetServicesAsync(filters);
+
+        var serviceDTOs = services.Select(service => new ServiceResponseDTO
         {
-            // Validate filters
-            if (filters == null)
+            Id = service.Id,
+            Name = service.Name,
+            Description = service.Description ?? "No description provided",
+            Price = service.Price,
+            ProviderId = service.ProviderId,
+            ServiceType = new ServiceTypeResponseDTO
             {
-                return Result<IEnumerable<ServiceResponseDTO>>.Failure(ErrorCodes.Validation.InvalidInput, "Filters cannot be null.");
-            }
-
-            if (filters.StartDate.HasValue && filters.EndDate.HasValue && filters.StartDate > filters.EndDate)
+                Id = service.ServiceType.Id,
+                Name = service.ServiceType.Name
+            },
+            Currency = new CurrencyResponseDTO
             {
-                return Result<IEnumerable<ServiceResponseDTO>>.Failure(ErrorCodes.Validation.InvalidFormat, "StartDate cannot be later than EndDate.");
+                Id = service.Currency.Id,
+                Code = service.Currency.Code,
+                Name = service.Currency.Name,
+                Symbol = service.Currency.Symbol
             }
+        }).ToList();
 
-            // Fetch services using filters
-            var services = await serviceRepository.GetServicesAsync(filters);
-
-            if (services == null || !services.Any())
-            {
-                return Result<IEnumerable<ServiceResponseDTO>>.Failure(ErrorCodes.Resource.NotFound, "No services found for the given criteria.");
-            }
-
-            var serviceDTOs = mapper.Map<IEnumerable<ServiceResponseDTO>>(services);
-            return Result<IEnumerable<ServiceResponseDTO>>.Success(serviceDTOs);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error occurred while fetching services with filters: {@Filters}", filters);
-            return Result<IEnumerable<ServiceResponseDTO>>.Failure(ErrorCodes.Server.InternalServerError);
-        }
+        return Result<IEnumerable<ServiceResponseDTO>>.Success(serviceDTOs);
     }
+
+    public async Task<Result<IEnumerable<ServiceResponseDTO>>> GetAllServicesAsync()
+    {
+        var services = await serviceRepository.GetAllAsync();
+
+        var serviceDTOs = services.Select(service => new ServiceResponseDTO
+        {
+            Id = service.Id,
+            Name = service.Name,
+            Description = service.Description ?? "No description provided",
+            Price = service.Price,
+            ProviderId = service.ProviderId,
+            ServiceType = new ServiceTypeResponseDTO
+            {
+                Id = service.ServiceType.Id,
+                Name = service.ServiceType.Name
+            },
+            Currency = new CurrencyResponseDTO
+            {
+                Id = service.Currency.Id,
+                Code = service.Currency.Code,
+                Name = service.Currency.Name,
+                Symbol = service.Currency.Symbol
+            }
+        }).ToList();
+
+        return Result<IEnumerable<ServiceResponseDTO>>.Success(serviceDTOs);
+    }
+
+    public async Task<Result<IEnumerable<ServiceResponseDTO>>> GetServicesWithinDistanceAsync(
+        ServiceFilterParameters filters, double userLat, double userLon)
+    {
+        var services = await serviceRepository.GetServicesAsync(filters);
+        var filteredServices = new List<ServiceResponseDTO>();
+
+        foreach (var service in services)
+        {
+            if (service.ServiceCoverage == null)
+            {
+                filteredServices.Add(mapper.Map<ServiceResponseDTO>(service));
+                continue;
+            }
+
+            var (distanceKm, durationMinutes) = await googleDistanceService.GetDrivingDistanceAsync(
+                service.ServiceCoverage.ProviderLatitude,
+                service.ServiceCoverage.ProviderLongitude,
+                userLat, userLon
+            );
+
+            if (distanceKm <= service.ServiceCoverage.MaxDrivingDistanceKm)
+            {
+                filteredServices.Add(mapper.Map<ServiceResponseDTO>(service));
+            }
+        }
+
+        return Result<IEnumerable<ServiceResponseDTO>>.Success(filteredServices);
+    }
+
 }

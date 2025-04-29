@@ -1,24 +1,25 @@
 ﻿using Newtonsoft.Json;
 using BookOrGetBooked.Core.Models;
 using System.Reflection;
+using BookOrGetBooked.Shared.DTOs;
 
 namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
 {
-    public class UserTypeSeedingService
+    public class ServiceTypeSeedingService
     {
         private readonly ApplicationDbContext _context;
 
-        public UserTypeSeedingService(ApplicationDbContext context)
+        public ServiceTypeSeedingService(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public void SeedUserTypesFromJson()
+        public void SeedServiceTypesFromJson()
         {
-            if (!_context.UserTypes.Any()) // Seed only if no user types exist
+            if (!_context.ServiceTypes.Any())
             {
                 var assembly = Assembly.GetExecutingAssembly();
-                var resourceName = "BookOrGetBooked.Infrastructure.Data.SeedData.usertypes.json";
+                var resourceName = "BookOrGetBooked.Infrastructure.Data.SeedData.serviceTypes.json";
 
                 using (var stream = assembly.GetManifestResourceStream(resourceName))
                 {
@@ -29,12 +30,16 @@ namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
 
                     using (var reader = new StreamReader(stream))
                     {
-                        var userTypesJson = reader.ReadToEnd();
-                        var userTypes = JsonConvert.DeserializeObject<List<UserType>>(userTypesJson);
+                        var serviceTypesJson = reader.ReadToEnd();
+                        var serviceTypeDtos = JsonConvert.DeserializeObject<List<ServiceTypeCreateDTO>>(serviceTypesJson);
 
-                        if (userTypes != null)
+                        if (serviceTypeDtos != null)
                         {
-                            _context.UserTypes.AddRange(userTypes);
+                            var serviceTypes = serviceTypeDtos.Select(dto =>
+                                new ServiceType { Id = dto.Id, Name = dto.Name }
+                            ).ToList();
+
+                            _context.ServiceTypes.AddRange(serviceTypes);
                             _context.SaveChanges();
                         }
                     }

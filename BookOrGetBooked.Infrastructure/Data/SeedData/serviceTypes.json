@@ -1,0 +1,30 @@
+[
+  {
+    "Id": 1,
+    "Name": "Consulting"
+  },
+  {
+    "Id": 2,
+    "Name": "Healthcare"
+  },
+  {
+    "Id": 3,
+    "Name": "Coaching"
+  },
+  {
+    "Id": 4,
+    "Name": "Legal Advice"
+  },
+  {
+    "Id": 5,
+    "Name": "Technical Support"
+  },
+  {
+    "Id": 6,
+    "Name": "Beauty & Wellness"
+  },
+  {
+    "Id": 7,
+    "Name": "Home Services"
+  }
+]

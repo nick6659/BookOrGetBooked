@@ -10,5 +10,7 @@ namespace BookOrGetBooked.Core.Interfaces
         Task<Result<bool>> ServiceExistsAsync(int serviceId);
         Task<Result<ServiceResponseDTO>> GetServiceAsync(int serviceId);
         Task<Result<IEnumerable<ServiceResponseDTO>>> GetServicesAsync(ServiceFilterParameters filters);
+        Task<Result<IEnumerable<ServiceResponseDTO>>> GetServicesWithinDistanceAsync(ServiceFilterParameters filters, double userLat, double userLon);
+        Task<Result<IEnumerable<ServiceResponseDTO>>> GetAllServicesAsync();
     }
 }

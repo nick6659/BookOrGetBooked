@@ -7,7 +7,14 @@ public class ServiceMappingProfile : MappingProfileBase
 {
     public ServiceMappingProfile()
     {
-        // Mapping from Service to ServiceResponseDTO
+        // AutoMapper will handle nested object mapping automatically!
         CreateMap<Service, ServiceResponseDTO>();
+
+        // Ensure related entities are mapped correctly
+        CreateMap<ServiceType, ServiceTypeResponseDTO>();
+        CreateMap<Currency, CurrencyResponseDTO>();
+
+        // If using ServiceCoverage:
+        CreateMap<ServiceCoverage, ServiceCoverageResponseDTO>();
     }
 }

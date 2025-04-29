@@ -1,11 +1,15 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using BookOrGetBooked.Core.Interfaces;
 using BookOrGetBooked.Core.Services;
 using BookOrGetBooked.Infrastructure.Data.Repositories;
 using BookOrGetBooked.Infrastructure.Data;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
 using BookOrGetBooked.API.Mappings;
 using BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices;
+using Microsoft.EntityFrameworkCore;
+using BookOrGetBooked.Infrastructure.ExternalServices;
 
 namespace BookOrGetBooked.API
 {
@@ -15,25 +19,60 @@ namespace BookOrGetBooked.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Configure built-in logging
+            builder.Logging.ClearProviders();  // Remove default loggers
+            builder.Logging.AddDebug();        // Debug output
+            builder.Logging.AddConsole();      // Console output
 
-            // Add DbContext with SQLite for now
+            // Add logging to DI container
+            builder.Services.AddLogging();
+
+            // Add services to the container.
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            // Configure Identity
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
+            // Configure JWT Authentication
+            var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+            var key = Encoding.UTF8.GetBytes(jwtSettings["Secret"]!);
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = jwtSettings["Audience"],
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero // Optional: Remove default 5-minute leeway
+                };
+            });
+
             // Dependency Injection for repositories and services
+            builder.Services.AddScoped<UserManager<ApplicationUser>>();
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
             builder.Services.AddScoped<IServiceService, ServiceService>();
+            builder.Services.AddScoped<IServiceTypeRepository, ServiceTypeRepository>();
+            builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
             builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
             builder.Services.AddScoped<ICurrencyService, CurrencyService>();
-            builder.Services.AddScoped<IUserTypeRepository, UserTypeRepository>();
-            builder.Services.AddScoped<IUserTypeService, UserTypeService>();
 
-            // Register only the centralized DataSeederService
+            builder.Services.AddHttpClient<IGoogleDistanceService, GoogleDistanceService>();
+
+            // Register centralized DataSeederService
             builder.Services.AddScoped<DataSeederService>();
 
             // Add AutoMapper and register the base profile
@@ -47,42 +86,72 @@ namespace BookOrGetBooked.API
 
             var app = builder.Build();
 
-            // Apply migrations and seed data
-            using (var scope = app.Services.CreateScope())
+            // Retrieve the logger from DI
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
+
+            try
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                logger.LogInformation("Starting the application...");
+                LogToFile("Starting the application...");
 
-                // Apply migrations first
-                dbContext.Database.Migrate();
+                // Apply migrations and seed data
+                using (var scope = app.Services.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-                // Call centralized DataSeederService to seed all necessary data
-                var dataSeeder = scope.ServiceProvider.GetRequiredService<DataSeederService>();
-                dataSeeder.SeedAll();  // This triggers all the individual seed services
+                    try
+                    {
+                        dbContext.Database.Migrate();
+                        var dataSeeder = scope.ServiceProvider.GetRequiredService<DataSeederService>();
+                        dataSeeder.SeedAll();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex, "Error during migration or seeding.");
+                        LogToFile($"Error during migration or seeding: {ex}");
+                    }
+                }
+
+                // Configure the HTTP request pipeline.
+                if (app.Environment.IsDevelopment())
+                {
+                    app.UseSwagger();
+                    app.UseSwaggerUI();
+                }
+                else
+                {
+                    app.UseHttpsRedirection();
+                    app.UseHsts();
+                }
+
+                app.UseRouting();
+                app.UseAuthentication();
+                app.UseAuthorization();
+                app.MapControllers();
+
+                app.Run();
+            }
+            catch (Exception ex)
+            {
+                logger.LogCritical(ex, "Application failed to start.");
+                LogToFile($"Critical error on startup: {ex}");
+            }
+        }
+
+        private static void LogToFile(string message)
+        {
+            string logFilePath = "logs/app-errors.log";
+            string? logDirectory = Path.GetDirectoryName(logFilePath);
+
+            if (!string.IsNullOrEmpty(logDirectory) && !Directory.Exists(logDirectory))
+            {
+                Directory.CreateDirectory(logDirectory);
             }
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            using (StreamWriter writer = new StreamWriter(logFilePath, true))
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                writer.WriteLine($"{DateTime.Now}: {message}");
             }
-            else
-            {
-                app.UseHttpsRedirection();
-                app.UseHsts();
-            }
-
-            app.Urls.Add("https://app.bookorgetbooked.com");
-            app.Urls.Add("https://localhost:5001");
-            app.Urls.Add("http://localhost:5000");
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.MapControllers();
-
-            app.Run();
         }
     }
 }

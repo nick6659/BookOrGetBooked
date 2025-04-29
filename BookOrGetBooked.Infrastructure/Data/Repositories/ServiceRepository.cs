@@ -2,6 +2,7 @@
 using BookOrGetBooked.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using BookOrGetBooked.Shared.Filters;
+using BookOrGetBooked.Shared.Utilities;
 
 namespace BookOrGetBooked.Infrastructure.Data.Repositories
 {
@@ -11,28 +12,39 @@ namespace BookOrGetBooked.Infrastructure.Data.Repositories
 
         public async Task<IEnumerable<Service>> GetServicesAsync(ServiceFilterParameters filters)
         {
-            var query = Query();
+            var query = Query()
+                .Include(s => s.ServiceType)
+                .Include(s => s.Currency)
+                .Include(s => s.ServiceCoverage)
+                .AsQueryable();
 
-            // Include or exclude deleted services
-            if (!filters.IncludeDeleted)
+            if (filters.IncludeDeleted.HasValue)
             {
-                query = query.Where(s => !s.IsDeleted);
+                if (!filters.IncludeDeleted.Value)
+                {
+                    query = query.Where(s => !s.IsDeleted);
+                }
+                else
+                {
+                    query = query.IgnoreQueryFilters();
+                }
             }
-            else
+
+            if (filters.ServiceTypeId.HasValue)
             {
-                query = query.IgnoreQueryFilters();
+                query = query.Where(s => s.ServiceTypeId == filters.ServiceTypeId.Value);
             }
 
-            // Filter by user
-            query = query.Where(s => s.ProviderId == filters.UserId);
+            if (!string.IsNullOrWhiteSpace(filters.ProviderId))
+            {
+                query = query.Where(s => s.ProviderId == filters.ProviderId);
+            }
 
-            // Filter by IsInactive flag
             if (filters.IsInactive.HasValue)
             {
                 query = query.Where(s => s.IsInactive == filters.IsInactive.Value);
             }
 
-            // Filter by date range
             if (filters.StartDate.HasValue)
             {
                 query = query.Where(s => s.Bookings.Any(b => b.TimeSlot >= filters.StartDate.Value));
@@ -45,5 +57,32 @@ namespace BookOrGetBooked.Infrastructure.Data.Repositories
 
             return await query.ToListAsync();
         }
+
+        public async Task<IEnumerable<Service>> GetServicesWithinDistanceAsync(ServiceFilterParameters filters, double userLat, double userLon)
+        {
+            var services = await GetServicesAsync(filters);
+
+            var filteredServices = services
+                .Where(service =>
+                    service.ServiceCoverage != null &&
+                    DistanceHelper.CalculateDistanceKm(
+                        service.ServiceCoverage.ProviderLatitude,
+                        service.ServiceCoverage.ProviderLongitude,
+                        userLat, userLon
+                    ) <= service.ServiceCoverage.MaxDrivingDistanceKm
+                )
+                .ToList();
+
+            return filteredServices;
+        }
+
+        public override async Task<IEnumerable<Service>> GetAllAsync()
+        {
+            return await Query()
+                .Include(s => s.ServiceType)
+                .Include(s => s.Currency)
+                .ToListAsync();
+        }
+
     }
 }

@@ -3,56 +3,63 @@
     "Id": 1,
     "Name": "Consultation",
     "Description": "A 30-minute consultation session",
+    "ServiceTypeId": 1,
     "Price": 50.0,
-    "ProviderId": 2,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
     "CurrencyId": 4
   },
   {
     "Id": 2,
     "Name": "Full Service",
     "Description": "Complete service package",
+    "ServiceTypeId": 2,
     "Price": 200.0,
-    "ProviderId": 2,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
     "CurrencyId": 4
   },
   {
     "Id": 3,
     "Name": "Follow-up",
     "Description": "A follow-up session to discuss progress",
+    "ServiceTypeId": 4,
     "Price": 80.0,
-    "ProviderId": 2,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
     "CurrencyId": 4
   },
   {
     "Id": 4,
     "Name": "Premium Package",
     "Description": "All-inclusive service plan",
+    "ServiceTypeId": 2,
     "Price": 500.0,
-    "ProviderId": 3,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
     "CurrencyId": 2
   },
   {
     "Id": 5,
     "Name": "Budget Package",
     "Description": "A cost-effective introductory package",
+    "ServiceTypeId": 1,
     "Price": 100.0,
-    "ProviderId": 3,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
     "CurrencyId": 2
   },
   {
     "Id": 6,
     "Name": "Online Consultation",
     "Description": "Virtual consultation session via video call",
+    "ServiceTypeId": 2,
     "Price": 40.0,
-    "ProviderId": 3,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
     "CurrencyId": 2
   },
   {
     "Id": 7,
     "Name": "Express Service",
     "Description": "Fast turnaround for urgent requests",
+    "ServiceTypeId": 4,
     "Price": 150.0,
-    "ProviderId": 3,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
     "CurrencyId": 2
   }
 ]

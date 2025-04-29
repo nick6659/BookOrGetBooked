@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookOrGetBooked.Core.Models
+namespace BookOrGetBooked.Shared.DTOs
 {
-    public class UserType
+    public class ServiceTypeCreateDTO
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-
-        public ICollection<User> Users { get; set; } = new List<User>();
     }
 }

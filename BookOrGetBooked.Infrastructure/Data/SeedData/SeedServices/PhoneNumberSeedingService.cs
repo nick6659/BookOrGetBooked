@@ -6,7 +6,8 @@ using BookOrGetBooked.Shared.DTOs;
 namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
 {
     public class PhoneNumberSeedingService
-    {
+    {/*
+
         private readonly ApplicationDbContext _context;
 
         public PhoneNumberSeedingService(ApplicationDbContext context)
@@ -60,5 +61,6 @@ namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
                 }
             }
         }
+        */
     }
 }
