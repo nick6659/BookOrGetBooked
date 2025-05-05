@@ -5,10 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using BookOrGetBooked.Shared.DTOs;
 using BookOrGetBooked.Infrastructure.Data;
-using BookOrGetBooked.Core.Models;
-using BookOrGetBooked.API.DTOs;
+using BookOrGetBooked.Shared.DTOs.Auth;
 
 namespace BookOrGetBooked.API.Controllers
 {

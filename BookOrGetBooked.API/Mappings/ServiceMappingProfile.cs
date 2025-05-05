@@ -1,5 +1,8 @@
 ﻿using BookOrGetBooked.Core.Models;
-using BookOrGetBooked.Shared.DTOs;
+using BookOrGetBooked.Shared.DTOs.Currency;
+using BookOrGetBooked.Shared.DTOs.Service;
+using BookOrGetBooked.Shared.DTOs.ServiceCoverage;
+using BookOrGetBooked.Shared.DTOs.ServiceType;
 
 namespace BookOrGetBooked.API.Mappings;
 

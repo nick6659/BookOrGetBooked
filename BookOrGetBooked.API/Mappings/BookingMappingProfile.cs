@@ -1,6 +1,8 @@
 ﻿using BookOrGetBooked.API.Mappings;
 using BookOrGetBooked.Core.Models;
-using BookOrGetBooked.Shared.DTOs;
+using BookOrGetBooked.Shared.DTOs.Booking;
+using BookOrGetBooked.Shared.DTOs.BookingStatus;
+using BookOrGetBooked.Shared.DTOs.Service;
 
 public class BookingMappingProfile : MappingProfileBase
 {

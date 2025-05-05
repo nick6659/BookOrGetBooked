@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using BookOrGetBooked.Core.Interfaces;
 using BookOrGetBooked.Core.Models;
-using BookOrGetBooked.Shared.DTOs;
 using BookOrGetBooked.Shared.Utilities;
 using BookOrGetBooked.Shared.Filters;
 using Microsoft.Extensions.Logging;
+using BookOrGetBooked.Shared.DTOs.Booking;
 
 namespace BookOrGetBooked.Core.Services;
 

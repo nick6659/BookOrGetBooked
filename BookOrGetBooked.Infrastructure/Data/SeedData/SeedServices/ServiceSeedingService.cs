@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using BookOrGetBooked.Core.Models;
 using System.Reflection;
-using BookOrGetBooked.Shared.DTOs;
+using BookOrGetBooked.Shared.DTOs.Service;
 
 namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
 {

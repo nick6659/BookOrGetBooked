@@ -1,5 +1,5 @@
 ﻿using BookOrGetBooked.Core.Interfaces;
-using BookOrGetBooked.Shared.DTOs;
+using BookOrGetBooked.Shared.DTOs.Booking;
 using BookOrGetBooked.Shared.Filters;
 using BookOrGetBooked.Shared.Utilities;
 using Microsoft.AspNetCore.Mvc;

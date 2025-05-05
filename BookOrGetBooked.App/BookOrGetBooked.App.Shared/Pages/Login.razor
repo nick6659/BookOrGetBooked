@@ -1,0 +1,52 @@
+@page "/login"
+@inject NavigationManager Navigation
+@inject AuthService AuthService
+
+<h3>Login</h3>
+
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Email</label>
+        <InputText @bind-Value="loginModel.Email" />
+    </div>
+    <div>
+        <label>Password</label>
+        <InputText @bind-Value="loginModel.Password" type="password" />
+    </div>
+
+    <button type="submit">Login</button>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color:red">@errorMessage</p>
+}
+
+<div style="margin-top: 1rem;">
+    <a @onclick="GoToRegister">Don’t have an account? Register</a><br />
+    <a @onclick="GoToForgotPassword">Forgot your password?</a>
+</div>
+
+@code {
+    private LoginDto loginModel = new();
+    private string? errorMessage;
+
+    private async Task HandleLogin()
+    {
+        var result = await AuthService.LoginAsync(loginModel);
+        if (result.IsSuccess)
+        {
+            Navigation.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = result.ErrorMessage;
+        }
+    }
+
+    void GoToRegister() => Navigation.NavigateTo("/register");
+    void GoToForgotPassword() => Navigation.NavigateTo("/forgot-password");
+}

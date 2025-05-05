@@ -1,5 +1,5 @@
 ﻿using BookOrGetBooked.Core.Models;
-using BookOrGetBooked.Shared.DTOs;
+using BookOrGetBooked.Shared.DTOs.BookingStatus;
 using System;
 using System.Collections.Generic;
 using System.Linq;

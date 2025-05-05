@@ -1,4 +1,6 @@
+using BookOrGetBooked.App.Shared.Interfaces;
 using BookOrGetBooked.App.Web.Components;
+using BookOrGetBooked.App.Web.Services;
 
 namespace BookOrGetBooked.App
 {
@@ -11,6 +13,8 @@ namespace BookOrGetBooked.App
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
+
+            builder.Services.AddScoped<ITokenStorage, WebTokenStorage>();
 
             var app = builder.Build();
 
@@ -27,7 +31,7 @@ namespace BookOrGetBooked.App
             app.UseStaticFiles();
             app.UseAntiforgery();
 
-            app.MapRazorComponents<App>()
+            app.MapRazorComponents<AppRoot>()
                 .AddInteractiveServerRenderMode()
                 .AddAdditionalAssemblies(typeof(BookOrGetBooked.App.Shared._Imports).Assembly);
 

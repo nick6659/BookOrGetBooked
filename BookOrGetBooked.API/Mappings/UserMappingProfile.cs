@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using BookOrGetBooked.Core.Models;
-using BookOrGetBooked.Shared.DTOs;
+using BookOrGetBooked.Shared.DTOs.Booking;
+using BookOrGetBooked.Shared.DTOs.PhoneNumber;
+using BookOrGetBooked.Shared.DTOs.Service;
+using BookOrGetBooked.Shared.DTOs.User;
 
 namespace BookOrGetBooked.API.Mappings
 {

@@ -5,6 +5,7 @@ using AutoMapper;
 using BookOrGetBooked.Shared.Filters;
 using Microsoft.Extensions.Logging;
 using BookOrGetBooked.Core.Models;
+using BookOrGetBooked.Shared.DTOs.Service;
 
 namespace BookOrGetBooked.Core.Services;
 

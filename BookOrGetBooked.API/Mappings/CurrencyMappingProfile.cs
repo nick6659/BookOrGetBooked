@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BookOrGetBooked.Core.Models;
-using BookOrGetBooked.Shared.DTOs;
+using BookOrGetBooked.Shared.DTOs.Currency;
 
 namespace BookOrGetBooked.API.Mappings
 {

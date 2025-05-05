@@ -1,4 +1,4 @@
-﻿using BookOrGetBooked.Shared.DTOs;
+﻿using BookOrGetBooked.Shared.DTOs.Service;
 using BookOrGetBooked.Shared.Filters;
 using BookOrGetBooked.Shared.Utilities;
 using System.Threading.Tasks;

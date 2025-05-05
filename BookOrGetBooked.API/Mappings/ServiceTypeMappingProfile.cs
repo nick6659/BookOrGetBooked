@@ -1,6 +1,6 @@
 ﻿using BookOrGetBooked.API.Mappings;
 using BookOrGetBooked.Core.Models;
-using BookOrGetBooked.Shared.DTOs;
+using BookOrGetBooked.Shared.DTOs.ServiceType;
 
 public class ServiceTypeMappingProfile : MappingProfileBase
 {

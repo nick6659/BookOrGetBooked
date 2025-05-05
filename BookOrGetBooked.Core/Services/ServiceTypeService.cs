@@ -1,12 +1,12 @@
 ﻿using BookOrGetBooked.Core.Interfaces;
 using BookOrGetBooked.Core.Models;
-using BookOrGetBooked.Shared.DTOs;
 using BookOrGetBooked.Shared.Utilities;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BookOrGetBooked.Shared.DTOs.ServiceType;
 
 namespace BookOrGetBooked.Core.Services
 {
