@@ -1,6 +1,8 @@
 @page "/login"
 @inject NavigationManager Navigation
-@inject AuthService AuthService
+@inject IAuthService AuthService
+@using BookOrGetBooked.App.Shared.Interfaces
+@using BookOrGetBooked.Shared.DTOs.Auth
 
 <h3>Login</h3>
 
@@ -31,7 +33,7 @@
 </div>
 
 @code {
-    private LoginDto loginModel = new();
+    private LoginRequestDto loginModel = new LoginRequestDto { Email = string.Empty, Password = string.Empty };
     private string? errorMessage;
 
     private async Task HandleLogin()

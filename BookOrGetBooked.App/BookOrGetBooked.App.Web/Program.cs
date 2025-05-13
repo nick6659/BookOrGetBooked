@@ -1,6 +1,7 @@
 using BookOrGetBooked.App.Shared.Interfaces;
 using BookOrGetBooked.App.Web.Components;
 using BookOrGetBooked.App.Web.Services;
+using BookOrGetBooked.App.Client.Services;
 
 namespace BookOrGetBooked.App
 {
@@ -15,6 +16,7 @@ namespace BookOrGetBooked.App
                 .AddInteractiveServerComponents();
 
             builder.Services.AddScoped<ITokenStorage, WebTokenStorage>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             var app = builder.Build();
 

@@ -41,7 +41,8 @@ namespace BookOrGetBooked.API.Controllers
                 Email = model.Email,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                PhoneNumber = $"{model.PhoneNumber.Prefix}{model.PhoneNumber.Number}"
+                PhonePrefix = model.PhoneNumber.Prefix,
+                PhoneNumber = model.PhoneNumber.Number,
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -64,7 +65,7 @@ namespace BookOrGetBooked.API.Controllers
                 return Unauthorized(new { message = "Invalid credentials" });
 
             var token = GenerateJwtToken(user);
-            return Ok(new { token });
+            return Ok(new TokenResponseDto { Token = token });
         }
 
         private string GenerateJwtToken(ApplicationUser user)
@@ -72,7 +73,7 @@ namespace BookOrGetBooked.API.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
                 new Claim(ClaimTypes.Email, user.Email)
             };
 

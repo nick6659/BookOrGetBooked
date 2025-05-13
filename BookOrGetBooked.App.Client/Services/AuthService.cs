@@ -1,11 +1,11 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using BookOrGetBooked.App.Shared.Interfaces;
-using BookOrGetBooked.Shared.DTOs;
+using BookOrGetBooked.Shared.DTOs.Auth;
 
-namespace BookOrGetBooked.App.Services
+namespace BookOrGetBooked.App.Client.Services
 {
-    public class AuthService
+    public class AuthService : IAuthService
     {
         private readonly HttpClient _httpClient;
         private readonly ITokenStorage _tokenStorage;
@@ -16,7 +16,7 @@ namespace BookOrGetBooked.App.Services
             _tokenStorage = tokenStorage;
         }
 
-        public async Task<(bool Success, string? ErrorMessage)> LoginAsync(LoginRequestDto loginDto)
+        public async Task<(bool IsSuccess, string? ErrorMessage)> LoginAsync(LoginRequestDto loginDto)
         {
             var response = await _httpClient.PostAsJsonAsync("api/auth/login", loginDto);
 
