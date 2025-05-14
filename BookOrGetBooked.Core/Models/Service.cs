@@ -27,7 +27,7 @@ namespace BookOrGetBooked.Core.Models
         public ICollection<Booking> Bookings { get; private set; } = [];
         public ServiceCoverage? ServiceCoverage { get; set; }
 
-        private Service(string name, string? description, int serviceTypeId, decimal price, int currencyId, string providerId, ServiceCoverage? serviceCoverage)
+        private Service(string name, string? description, int serviceTypeId, decimal price, int currencyId, string providerId)
         {
             Name = name;
             Description = description;
@@ -37,7 +37,6 @@ namespace BookOrGetBooked.Core.Models
             ProviderId = providerId;
             IsDeleted = false;
             IsInactive = false;
-            ServiceCoverage = serviceCoverage;
         }
 
         public static Service Create(string name, string? description, int serviceTypeId, decimal price, int currencyId, string providerId, ServiceCoverage? serviceCoverage = null)
@@ -57,7 +56,10 @@ namespace BookOrGetBooked.Core.Models
             if (string.IsNullOrWhiteSpace(providerId))
                 throw new ArgumentException("ProviderId must be a valid user ID.", nameof(providerId));
 
-            return new Service(name, description, serviceTypeId, price, currencyId, providerId, serviceCoverage);
+            return new Service(name, description, serviceTypeId, price, currencyId, providerId)
+            {
+                ServiceCoverage = serviceCoverage
+            };
         }
 
         public void MarkAsDeleted()

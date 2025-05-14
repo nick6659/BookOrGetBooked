@@ -36,6 +36,12 @@ namespace BookOrGetBooked.Infrastructure.Data
                 .WithMany(st => st.Services)
                 .HasForeignKey(s => s.ServiceTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Service>()
+                .HasOne(s => s.ServiceCoverage)
+                .WithOne(sc => sc.Service)
+                .HasForeignKey<ServiceCoverage>(sc => sc.ServiceId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
