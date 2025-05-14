@@ -17,6 +17,7 @@ namespace BookOrGetBooked.App
 
             builder.Services.AddScoped<ITokenStorage, WebTokenStorage>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddSingleton<JwtParserService>();
 
             var app = builder.Build();
 

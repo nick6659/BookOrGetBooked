@@ -1,0 +1,48 @@
+﻿@using BookOrGetBooked.App.Shared.Interfaces
+@inherits LayoutComponentBase
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+
+@code {
+    private bool isInitialized;
+    private bool isAuthenticated;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isAuthenticated = await AuthService.TryRestoreSessionAsync();
+        isInitialized = true;
+
+        var uri = Navigation.Uri;
+
+        var isLoginPage = uri.Contains("/login");
+        var isRegisterPage = uri.Contains("/register");
+        var isForgotPasswordPage = uri.Contains("/forgot-password");
+
+        if (!isAuthenticated && !(isLoginPage || isRegisterPage || isForgotPasswordPage))
+        {
+            Navigation.NavigateTo("/login", forceLoad: true);
+        }
+
+        if (isAuthenticated && (isLoginPage || isRegisterPage || isForgotPasswordPage))
+        {
+            Navigation.NavigateTo("/", forceLoad: true);
+        }
+    }
+}
+
+@if (!isInitialized)
+{
+    <p>Loading...</p>
+}
+else if (isAuthenticated)
+{
+    <div class="main">
+        @Body
+    </div>
+}
+else if (!isAuthenticated && (Navigation.Uri.Contains("/login") || Navigation.Uri.Contains("/register") || Navigation.Uri.Contains("/forgot-password")))
+{
+    <div class="main">
+        @Body
+    </div>
+}

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BookOrGetBooked.App\BookOrGetBooked.App.Shared\BookOrGetBooked.App.Shared.csproj" />
     <ProjectReference Include="..\BookOrGetBooked.Shared\BookOrGetBooked.Shared.csproj" />
   </ItemGroup>
