@@ -15,6 +15,8 @@ namespace BookOrGetBooked.App
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
+            builder.Services.AddHttpClient();
+
             builder.Services.AddScoped<ITokenStorage, WebTokenStorage>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddSingleton<JwtParserService>();
