@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace BookOrGetBooked.API.Controllers;
 
-
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ProfileController : ControllerBase
@@ -26,6 +26,7 @@ public class ProfileController : ControllerBase
     [HttpGet("me")]
     public async Task<IActionResult> GetCurrentUser()
     {
+        _logger.LogInformation("Claims: {@Claims}", User.Claims.Select(c => new { c.Type, c.Value }));
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId))
             return Unauthorized(Result.Failure(ErrorCodes.Authentication.Unauthorized));

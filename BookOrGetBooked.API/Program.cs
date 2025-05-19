@@ -6,6 +6,7 @@ using BookOrGetBooked.Infrastructure.Data.Repositories;
 using BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices;
 using BookOrGetBooked.Infrastructure.ExternalServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -67,7 +68,21 @@ namespace BookOrGetBooked.API
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero, // Optional: Remove default 5-minute leeway
 
-                    NameClaimType = ClaimTypes.NameIdentifier
+                };
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                        logger.LogError("Authentication failed: {Exception}", context.Exception.Message);
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = context =>
+                    {
+                        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                        logger.LogInformation("Token validated for user: {User}", context.Principal!.Identity!.Name);
+                        return Task.CompletedTask;
+                    }
                 };
             });
 
