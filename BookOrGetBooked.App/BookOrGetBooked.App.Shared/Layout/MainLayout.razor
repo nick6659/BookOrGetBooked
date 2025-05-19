@@ -1,51 +1,24 @@
 ﻿@using BookOrGetBooked.App.Shared.Interfaces
 @inherits LayoutComponentBase
 @inject IAuthService AuthService
-@inject NavigationManager Navigation
 
 @code {
-    private bool isInitialized;
-    private bool isAuthenticated;
+    private bool hasFlushedTokens;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        isAuthenticated = await AuthService.TryRestoreSessionAsync();
-        isInitialized = true;
-
-        var uri = Navigation.Uri;
-
-        var isLoginPage = uri.Contains("/login");
-        var isRegisterPage = uri.Contains("/register");
-        var isForgotPasswordPage = uri.Contains("/forgot-password");
-        var isPublicPage = isLoginPage || isRegisterPage || isForgotPasswordPage;
-
-        // Redirect if trying to access private page without being authenticated
-        if (!isAuthenticated && !isPublicPage)
+        if (firstRender && !hasFlushedTokens)
         {
-            await InvokeAsync(() => Navigation.NavigateTo("/login", forceLoad: true));
-        }
+            if (AuthService is IFlushableAuthService flushable)
+            {
+                await flushable.FlushTokenQueueAsync();
+            }
 
-        // Redirect if already authenticated and on a public page
-        if (isAuthenticated && isPublicPage)
-        {
-            await InvokeAsync(() => Navigation.NavigateTo("/", forceLoad: true));
+            hasFlushedTokens = true;
         }
     }
 }
 
-@if (!isInitialized)
-{
-    <p>Loading...</p>
-}
-else
-{
-    <div class="main">
-        @Body
-    </div>
-
-    <div id="blazor-error-ui" data-nosnippet>
-        An unhandled error has occurred.
-        <a href="." class="reload">Reload</a>
-        <span class="dismiss">🗙</span>
-    </div>
-}
+<div class="main">
+    @Body
+</div>

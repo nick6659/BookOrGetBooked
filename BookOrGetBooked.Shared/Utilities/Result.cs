@@ -1,5 +1,6 @@
 ﻿namespace BookOrGetBooked.Shared.Utilities
 {
+    using BookOrGetBooked.Shared.Validation;
     using System.Text.Json.Serialization;
 
     public class Result

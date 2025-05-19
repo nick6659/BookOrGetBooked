@@ -1,7 +1,9 @@
+using Blazored.LocalStorage;
+using BookOrGetBooked.App.Client.Services;
+using BookOrGetBooked.App.Client.Services.Http;
 using BookOrGetBooked.App.Shared.Interfaces;
 using BookOrGetBooked.App.Web.Components;
 using BookOrGetBooked.App.Web.Services;
-using BookOrGetBooked.App.Client.Services;
 
 namespace BookOrGetBooked.App
 {
@@ -15,11 +17,22 @@ namespace BookOrGetBooked.App
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
-            builder.Services.AddHttpClient();
+            builder.Services.AddBlazoredLocalStorage();
+
+            var config = builder.Configuration;
+            var apiBaseUrl = config["ApiSettings:BaseUrl"] 
+                ?? throw new InvalidOperationException("Missing 'ApiSettings:BaseUrl' in appsettings.json.");
 
             builder.Services.AddScoped<ITokenStorage, WebTokenStorage>();
-            builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddSingleton<JwtParserService>();
+
+            builder.Services.AddTransient<RefreshTokenHandler>();
+
+            builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
+            {
+                client.BaseAddress = new Uri(apiBaseUrl);
+            })
+            .AddHttpMessageHandler<RefreshTokenHandler>();
 
             var app = builder.Build();
 

@@ -18,4 +18,10 @@
     <ProjectReference Include="..\..\BookOrGetBooked.Shared\BookOrGetBooked.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\app.css">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

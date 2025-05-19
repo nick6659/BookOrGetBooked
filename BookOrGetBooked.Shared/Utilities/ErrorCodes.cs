@@ -26,6 +26,8 @@
             public const string UniqueConstraintViolation = "UNIQUE_CONSTRAINT_VIOLATION";
             public const string InvalidInput = "INVALID_INPUT";
             public const string DuplicateEntry = "DUPLICATE_ENTRY";
+            public const string EmailAlreadyRegistered = "EMAIL_ALREADY_REGISTERED";
+            public const string PhoneAlreadyRegistered = "PHONE_ALREADY_REGISTERED";
 
             public static readonly Dictionary<string, string> Messages = new()
             {
@@ -35,7 +37,10 @@
                 { OutOfRange, "The value is out of the acceptable range." },
                 { UniqueConstraintViolation, "The value violates a unique constraint." },
                 { InvalidInput, "The input provided is invalid." },
-                { DuplicateEntry, "A record with the same value already exists. Please use a unique value." }            };
+                { DuplicateEntry, "A record with the same value already exists. Please use a unique value." },
+                { EmailAlreadyRegistered, "Email is already registered." },
+                { PhoneAlreadyRegistered, "Phone number is already registered." },
+            };
         }
 
         public static class Authentication

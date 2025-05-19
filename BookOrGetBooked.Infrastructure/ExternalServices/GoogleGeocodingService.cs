@@ -42,7 +42,7 @@ namespace BookOrGetBooked.Infrastructure.ExternalServices
 
     public class GoogleGeocodeResponse
     {
-        public GeocodeResult[] results { get; set; }
+        public required GeocodeResult[] results { get; set; }
     }
 
     public class GeocodeResult

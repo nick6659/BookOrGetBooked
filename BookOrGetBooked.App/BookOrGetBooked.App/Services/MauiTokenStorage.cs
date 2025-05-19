@@ -5,30 +5,49 @@ namespace BookOrGetBooked.App.Services
 {
     public class MauiTokenStorage : ITokenStorage
     {
-        private const string TokenKey = "auth_token";
+        private const string AccessTokenKey = "access_token";
+        private const string RefreshTokenKey = "refresh_token";
 
-        public Task SaveTokenAsync(string token)
+        public async Task SaveTokensAsync(string accessToken, string refreshToken)
         {
-            SecureStorage.SetAsync(TokenKey, token);
-            return Task.CompletedTask;
+            await SecureStorage.SetAsync(AccessTokenKey, accessToken);
+            await SecureStorage.SetAsync(RefreshTokenKey, refreshToken);
         }
 
-        public async Task<string?> GetTokenAsync()
+        public async Task<string?> GetAccessTokenAsync()
         {
             try
             {
-                return await SecureStorage.GetAsync(TokenKey);
+                return await SecureStorage.GetAsync(AccessTokenKey);
             }
             catch
             {
-                // SecureStorage might throw if not supported
                 return null;
             }
         }
 
-        public Task ClearTokenAsync()
+        public async Task<string?> GetRefreshTokenAsync()
         {
-            SecureStorage.Remove(TokenKey);
+            try
+            {
+                return await SecureStorage.GetAsync(RefreshTokenKey);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public Task ClearTokensAsync()
+        {
+            SecureStorage.Remove(AccessTokenKey);
+            SecureStorage.Remove(RefreshTokenKey);
+            return Task.CompletedTask;
+        }
+
+        public Task TryFlushPendingTokenWritesAsync()
+        {
+            // Wait for JS interop or queue flushing logic
             return Task.CompletedTask;
         }
     }

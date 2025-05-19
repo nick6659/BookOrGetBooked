@@ -1,11 +1,12 @@
 ﻿using BookOrGetBooked.Shared.Utilities;
+using BookOrGetBooked.Shared.Validation;
 
 namespace BookOrGetBooked.Shared.Filters
 {
     public class BookingFilterParameters
     {
-        public int? BookerId { get; set; } // The user who booked the service
-        public int? ProviderId { get; set; } // The user who provides the service
+        public string? BookerId { get; set; } // The user who booked the service
+        public string? ProviderId { get; set; } // The user who provides the service
 
         public DateTime? StartDate { get; set; } = null;
 
@@ -45,15 +46,14 @@ namespace BookOrGetBooked.Shared.Filters
         {
             var errors = new List<ValidationError>();
 
-            // Ensure BookerId and ProviderId are positive if provided
-            if (BookerId.HasValue && BookerId <= 0)
+            if (!string.IsNullOrEmpty(BookerId) && !Guid.TryParse(BookerId, out _))
             {
-                errors.Add(new ValidationError(nameof(BookerId), ErrorCodes.Validation.OutOfRange, "BookerId must be a positive number."));
+                errors.Add(new ValidationError(nameof(BookerId), ErrorCodes.Validation.InvalidFormat, "BookerId must be a valid GUID."));
             }
 
-            if (ProviderId.HasValue && ProviderId <= 0)
+            if (!string.IsNullOrEmpty(BookerId) && !Guid.TryParse(ProviderId, out _))
             {
-                errors.Add(new ValidationError(nameof(ProviderId), ErrorCodes.Validation.OutOfRange, "ProviderId must be a positive number."));
+                errors.Add(new ValidationError(nameof(BookerId), ErrorCodes.Validation.InvalidFormat, "ProviderId must be a valid GUID."));
             }
 
             // StartDate must not be after EndDate

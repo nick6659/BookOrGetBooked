@@ -1,7 +1,49 @@
-﻿@page "/"
+﻿@attribute [Authorize]
+@page "/home"
+@using BookOrGetBooked.App.Shared.Interfaces
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
+<p>Welcome to your new app.</p>
 
-Welcome to your new app.
+@if (isAuthenticated)
+{
+    <p>You are logged in.</p>
+    <button class="logout-button" @onclick="HandleLogout">Logout</button>
+}
+else
+{
+    <p>You are not logged in.</p>
+    <button class="login-button" @onclick="GoToLogin">Go to Login</button>
+}
+
+@code {
+    private bool isAuthenticated;
+    private bool hasRendered;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !hasRendered)
+        {
+            hasRendered = true;
+
+            isAuthenticated = await AuthService.TryRestoreSessionAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleLogout()
+    {
+        await AuthService.LogoutAsync();
+        Navigation.NavigateTo("/login", forceLoad: true);
+    }
+
+    private void GoToLogin()
+    {
+        Navigation.NavigateTo("/login");
+    }
+}

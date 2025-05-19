@@ -17,14 +17,17 @@ namespace BookOrGetBooked.Infrastructure.Data
         {
             base.OnModelCreating(builder);
 
-            // Configure the relationship between Booking and User (Booker)
+            // The relationship between Booking and ApplicationUser (Booker)
             builder.Entity<Booking>()
-                .HasOne(b => b.Booker) // Booker navigation property
-                .WithMany()            // Booker does not have a collection of bookings
-                .HasForeignKey(b => b.BookerId) // Foreign key in Booking table
-                .OnDelete(DeleteBehavior.Restrict); // Define delete behavior
+                .HasOne(b => b.Booker)
+                .WithMany(u => u.Bookings)
+                .HasForeignKey(b => b.BookerId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Configure the relationship between Booking and Service
+            builder.Entity<Booking>()
+                .HasIndex(b => b.BookerId);
+
+            // The relationship between Booking and Service
             builder.Entity<Booking>()
                 .HasOne(b => b.Service) // Booking has a Service
                 .WithMany(s => s.Bookings) // A Service can have multiple Bookings

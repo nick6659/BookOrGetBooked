@@ -46,7 +46,7 @@ namespace BookOrGetBooked.Infrastructure.ExternalServices
 
     public class GoogleDistanceResponse
     {
-        public GoogleDistanceRow[] rows { get; set; }
+        public required GoogleDistanceRow[] rows { get; set; }
     }
 
     public class GoogleDistanceRow

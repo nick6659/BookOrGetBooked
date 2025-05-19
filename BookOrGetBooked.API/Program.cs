@@ -1,15 +1,16 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using BookOrGetBooked.API.Mappings;
 using BookOrGetBooked.Core.Interfaces;
 using BookOrGetBooked.Core.Services;
-using BookOrGetBooked.Infrastructure.Data.Repositories;
 using BookOrGetBooked.Infrastructure.Data;
-using BookOrGetBooked.API.Mappings;
+using BookOrGetBooked.Infrastructure.Data.Repositories;
 using BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices;
-using Microsoft.EntityFrameworkCore;
 using BookOrGetBooked.Infrastructure.ExternalServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Text;
 
 namespace BookOrGetBooked.API
 {
@@ -36,6 +37,17 @@ namespace BookOrGetBooked.API
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            // Password and user rules
+            builder.Services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequiredLength = 8;
+                options.Password.RequireDigit = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+
+                options.User.RequireUniqueEmail = true;
+            });
+
             // Configure JWT Authentication
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
             var key = Encoding.UTF8.GetBytes(jwtSettings["Secret"]!);
@@ -53,7 +65,9 @@ namespace BookOrGetBooked.API
                     ValidateAudience = true,
                     ValidAudience = jwtSettings["Audience"],
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero // Optional: Remove default 5-minute leeway
+                    ClockSkew = TimeSpan.Zero, // Optional: Remove default 5-minute leeway
+
+                    NameClaimType = ClaimTypes.NameIdentifier
                 };
             });
 
@@ -61,19 +75,19 @@ namespace BookOrGetBooked.API
             builder.Services.AddScoped<UserManager<ApplicationUser>>();
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IBookingService, BookingService>();
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
             builder.Services.AddScoped<IServiceService, ServiceService>();
             builder.Services.AddScoped<IServiceTypeRepository, ServiceTypeRepository>();
             builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
             builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
             builder.Services.AddScoped<ICurrencyService, CurrencyService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<ITokenService, TokenService>();
 
             builder.Services.AddHttpClient<IGoogleDistanceService, GoogleDistanceService>();
 
             // Register centralized DataSeederService
-            builder.Services.AddScoped<DataSeederService>();
+            //builder.Services.AddScoped<DataSeederService>();
 
             // Add AutoMapper and register the base profile
             builder.Services.AddAutoMapper(typeof(MappingProfileBase));
@@ -102,8 +116,10 @@ namespace BookOrGetBooked.API
                     try
                     {
                         dbContext.Database.Migrate();
+                        /*
                         var dataSeeder = scope.ServiceProvider.GetRequiredService<DataSeederService>();
                         dataSeeder.SeedAll();
+                        */
                     }
                     catch (Exception ex)
                     {

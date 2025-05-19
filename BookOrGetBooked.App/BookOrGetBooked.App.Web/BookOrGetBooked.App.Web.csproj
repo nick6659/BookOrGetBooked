@@ -8,6 +8,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\..\BookOrGetBooked.App.Client\BookOrGetBooked.App.Client.csproj" />
 		<ProjectReference Include="..\..\BookOrGetBooked.Shared\BookOrGetBooked.Shared.csproj" />
 		<ProjectReference Include="..\BookOrGetBooked.App.Shared\BookOrGetBooked.App.Shared.csproj" />

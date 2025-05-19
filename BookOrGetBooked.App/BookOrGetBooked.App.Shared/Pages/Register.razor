@@ -1,0 +1,228 @@
+﻿@layout PublicLayout
+@page "/register"
+@using BookOrGetBooked.App.Shared.Interfaces
+@using BookOrGetBooked.App.Shared.Layout
+@using BookOrGetBooked.Shared.DTOs.Auth
+@using BookOrGetBooked.Shared.Validation
+@inject NavigationManager Navigation
+@inject IAuthService AuthService
+@attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+
+<div class="login-container">
+    <h1 class="login-title">📝 Register</h1>
+
+    <EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
+        <InputText @bind-Value="registerModel.FirstName" placeholder="First Name" class="@FirstNameClass" />
+        <div class="field-validation-error fade @(string.IsNullOrEmpty(firstNameError) ? "hidden" : "")">
+            @firstNameError
+        </div>
+
+        <InputText @bind-Value="registerModel.LastName" placeholder="Last Name" class="@LastNameClass" />
+        <div class="field-validation-error fade @(string.IsNullOrEmpty(lastNameError) ? "hidden" : "")">
+            @lastNameError
+        </div>
+
+        <InputText @bind-Value="registerModel.Email"
+                   placeholder="Email"
+                   class="@EmailClass"
+                   @oninput="ValidateEmail" />
+        <div class="field-validation-error fade @(string.IsNullOrEmpty(emailError) ? "hidden" : "")">
+            @emailError
+        </div>
+
+        <InputText @bind-Value="registerModel.PhoneNumber"
+                   placeholder="+4512345678"
+                   class="@PhoneClass"
+                   @oninput="ValidatePhoneNumber" />
+        <div class="field-validation-error fade @(string.IsNullOrEmpty(phoneNumberError) ? "hidden" : "")">
+            @phoneNumberError
+        </div>
+
+        <div class="input-wrapper">
+            <InputText @bind-Value="registerModel.Password"
+                       @oninput="OnPasswordInput"
+                       type="password"
+                       placeholder="Password"
+                       class="@PasswordClass" />
+            <div class="field-validation-error fade @(string.IsNullOrEmpty(passwordError) ? "hidden" : "")">
+                @passwordError
+            </div>
+        </div>
+
+        <div class="input-wrapper">
+            <InputText @bind-Value="confirmPassword"
+                       @oninput="OnConfirmPasswordInput"
+                       type="password"
+                       placeholder="Confirm Password"
+                       class="@ConfirmClass" />
+            <div class="field-validation-error fade @(string.IsNullOrEmpty(confirmPasswordError) ? "hidden" : "")">
+                @confirmPasswordError
+            </div>
+        </div>
+
+        <button type="submit" class="login-button" disabled="@isLoading">
+            @if (isLoading)
+            {
+                <span class="loader"></span>
+            }
+            else
+            {
+                <span>REGISTER</span>
+            }
+        </button>
+    </EditForm>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p class="login-error">@errorMessage</p>
+    }
+
+    <p class="login-link" @onclick="GoToLogin">Already have an account? Login</p>
+</div>
+
+@code {
+    private RegisterRequestDto registerModel = new()
+    {
+        FirstName = string.Empty,
+        LastName = string.Empty,
+        Email = string.Empty,
+        Password = string.Empty,
+        PhoneNumber = string.Empty
+    };
+
+    private string confirmPassword = string.Empty;
+    private string? errorMessage;
+    private string? firstNameError;
+    private string? lastNameError;
+    private string? emailError;
+    private string? passwordError;
+    private string? confirmPasswordError;
+    private string? phoneNumberError;
+    private bool isLoading = false;
+
+    private string FirstNameClass =>
+        "login-input" + (!string.IsNullOrEmpty(firstNameError) ? " input-error" : (registerModel.FirstName.Length > 0 ? " input-success" : ""));
+
+    private string LastNameClass =>
+        "login-input" + (!string.IsNullOrEmpty(lastNameError) ? " input-error" : (registerModel.LastName.Length > 0 ? " input-success" : ""));
+
+    private string EmailClass =>
+        "login-input" + (!string.IsNullOrEmpty(emailError)
+            ? " input-error"
+            : (registerModel.Email.Length > 0 ? " input-success" : ""));
+
+    private string PasswordClass =>
+        "login-input" + (!string.IsNullOrEmpty(passwordError)
+            ? " input-error"
+            : (registerModel.Password.Length > 0 ? " input-success" : ""));
+
+    private string ConfirmClass =>
+        "login-input" + (!string.IsNullOrEmpty(confirmPasswordError)
+            ? " input-error"
+            : (confirmPassword.Length > 0 ? " input-success" : ""));
+
+    private string PhoneClass =>
+        "login-input" + (!string.IsNullOrEmpty(phoneNumberError)
+            ? " input-error"
+            : (PhoneNumberValidator.IsValid(registerModel.PhoneNumber) ? " input-success" : ""));
+
+    private void OnPasswordInput(ChangeEventArgs e)
+    {
+        registerModel.Password = e.Value?.ToString() ?? "";
+        ValidatePasswords();
+    }
+
+    private void OnConfirmPasswordInput(ChangeEventArgs e)
+    {
+        confirmPassword = e.Value?.ToString() ?? "";
+        ValidatePasswords();
+    }
+
+    private void ValidatePasswords()
+    {
+        passwordError = null;
+        confirmPasswordError = null;
+
+        var password = registerModel.Password;
+
+        if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
+            passwordError = "Password must be at least 8 characters long.";
+        else if (!password.Any(char.IsUpper))
+            passwordError = "Password must include an uppercase letter.";
+        else if (!password.Any(char.IsDigit))
+            passwordError = "Password must include a digit.";
+        else if (!password.Any(ch => !char.IsLetterOrDigit(ch)))
+            passwordError = "Password must include a symbol.";
+
+        if (!string.IsNullOrWhiteSpace(confirmPassword) && password != confirmPassword)
+            confirmPasswordError = "Passwords do not match.";
+    }
+
+    private void ValidatePhoneNumber(ChangeEventArgs e)
+    {
+        registerModel.PhoneNumber = e.Value?.ToString()?.Trim() ?? "";
+        phoneNumberError = null;
+
+        if (!PhoneNumberValidator.IsValid(registerModel.PhoneNumber))
+        {
+            phoneNumberError = PhoneNumberValidator.ValidationErrorMessage;
+        }
+    }
+
+    private void ValidateEmail(ChangeEventArgs e)
+    {
+        registerModel.Email = e.Value?.ToString()?.Trim() ?? "";
+        emailError = null;
+
+        if (!EmailValidator.IsValid(registerModel.Email))
+        {
+            emailError = EmailValidator.ValidationErrorMessage;
+        }
+    }
+
+    private async Task HandleRegister()
+    {
+        errorMessage = null;
+        ValidatePasswords();
+        ValidatePhoneNumber(new ChangeEventArgs { Value = registerModel.PhoneNumber });
+        ValidateEmail(new ChangeEventArgs { Value = registerModel.Email });
+
+        firstNameError = string.IsNullOrWhiteSpace(registerModel.FirstName) ? "* Required" : null;
+        lastNameError = string.IsNullOrWhiteSpace(registerModel.LastName) ? "* Required" : null;
+
+        if (!string.IsNullOrEmpty(firstNameError) ||
+            !string.IsNullOrEmpty(lastNameError) ||
+            !string.IsNullOrEmpty(passwordError) ||
+            !string.IsNullOrEmpty(confirmPasswordError) ||
+            !string.IsNullOrEmpty(phoneNumberError) ||
+            !string.IsNullOrEmpty(emailError))
+            return;
+
+        isLoading = true;
+        var result = await AuthService.RegisterAsync(registerModel);
+        isLoading = false;
+
+        if (result.IsSuccess)
+        {
+            Navigation.NavigateTo("/login");
+        }
+        else
+        {
+            if (!string.IsNullOrWhiteSpace(result.ErrorMessage))
+            {
+                try
+                {
+                    var json = System.Text.Json.JsonDocument.Parse(result.ErrorMessage);
+                    errorMessage = json.RootElement.GetProperty("message").GetString();
+                }
+                catch
+                {
+                    errorMessage = "An unexpected error occurred.";
+                }
+            }
+            else { errorMessage = "An unexpected error occurred."; }
+        }
+    }
+
+    private void GoToLogin() => Navigation.NavigateTo("/login");
+}

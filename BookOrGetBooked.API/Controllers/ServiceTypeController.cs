@@ -51,7 +51,7 @@ namespace BookOrGetBooked.API.Controllers
             {
                 return BadRequest(new { message = result.Error });
             }
-            return CreatedAtAction(nameof(GetById), new { id = result.Data.Id }, result.Data);
+            return CreatedAtAction(nameof(GetById), new { id = result.Data!.Id }, result.Data);
         }
 
         // Update an existing service type

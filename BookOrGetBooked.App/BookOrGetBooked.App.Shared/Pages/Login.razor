@@ -1,52 +1,63 @@
+﻿@layout PublicLayout
 @page "/login"
 @using BookOrGetBooked.App.Shared.Interfaces
+@using BookOrGetBooked.App.Shared.Layout
 @using BookOrGetBooked.Shared.DTOs.Auth
 @inject NavigationManager Navigation
 @inject IAuthService AuthService
 @attribute [Microsoft.AspNetCore.Authorization.AllowAnonymous]
 
-<h3>Login</h3>
+<div class="login-container">
+    <h1 class="login-title">🔑 Login</h1>
 
-<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-    <div>
-        <label>Email</label>
-        <InputText @bind-Value="loginModel.Email" />
-    </div>
-    <div>
-        <label>Password</label>
-        <InputText @bind-Value="loginModel.Password" type="password" />
-    </div>
+        <InputText @bind-Value="loginModel.Email" placeholder="Email" class="login-input" />
+        <InputText @bind-Value="loginModel.Password" placeholder="Password" type="password" class="login-input" />
 
-    <button type="submit">Login</button>
-</EditForm>
+        <button type="submit" class="login-button" disabled="@isLoading">
+            @if (isLoading)
+            {
+                <span class="loader"></span>
+            }
+            else
+            {
+                <span>LOGIN</span>
+            }
+        </button>
+    </EditForm>
 
-@if (!string.IsNullOrEmpty(errorMessage))
-{
-    <p style="color:red">@errorMessage</p>
-}
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p class="login-error">@errorMessage</p>
+    }
 
-<div style="margin-top: 1rem;">
-    <a @onclick="GoToRegister">Don�t have an account? Register</a><br />
-    <a @onclick="GoToForgotPassword">Forgot your password?</a>
+    <p class="login-link" @onclick="GoToRegister">Don’t have an account? Register</p>
+    <p class="login-link" @onclick="GoToForgotPassword">Forgot your password?</p>
 </div>
 
 @code {
-    private LoginRequestDto loginModel = new LoginRequestDto { Email = string.Empty, Password = string.Empty };
+    private LoginRequestDto loginModel = new() { Email = "", Password = "" };
     private string? errorMessage;
+    private bool isLoading = false;
 
     private async Task HandleLogin()
     {
+        isLoading = true;
+        errorMessage = null;
+
         var result = await AuthService.LoginAsync(loginModel);
+        isLoading = false;
+
         if (result.IsSuccess)
         {
-            Navigation.NavigateTo("/");
+            Navigation.NavigateTo("/home");
         }
         else
         {
-            errorMessage = result.ErrorMessage;
+            errorMessage = result.ErrorMessage ?? "Login failed. Please check your credentials.";
         }
     }
 

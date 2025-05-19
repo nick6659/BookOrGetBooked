@@ -45,9 +45,9 @@ public class BookingRepository(
     private static IQueryable<Booking> ApplyFilters(IQueryable<Booking> query, BookingFilterParameters filters)
     {
         // Filter by BookerId if provided
-        if (filters.BookerId.HasValue)
+        if (!string.IsNullOrEmpty(filters.BookerId))
         {
-            query = query.Where(b => b.BookerId == filters.BookerId.Value);
+            query = query.Where(b => b.BookerId == filters.BookerId);
         }
 
         // Filter by date range

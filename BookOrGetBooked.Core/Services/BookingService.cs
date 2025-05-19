@@ -106,7 +106,7 @@ public class BookingService(
             }
 
             // Manually update only the provided fields
-            if (bookingUpdateRequest.BookerId != 0) // Check if a valid BookerId is provided
+            if (bookingUpdateRequest.BookerId != string.Empty) // Check if a valid BookerId is provided
             {
                 existingBooking.BookerId = bookingUpdateRequest.BookerId;
             }
