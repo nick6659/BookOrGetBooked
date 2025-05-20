@@ -208,19 +208,9 @@
         }
         else
         {
-            if (!string.IsNullOrWhiteSpace(result.ErrorMessage))
-            {
-                try
-                {
-                    var json = System.Text.Json.JsonDocument.Parse(result.ErrorMessage);
-                    errorMessage = json.RootElement.GetProperty("message").GetString();
-                }
-                catch
-                {
-                    errorMessage = "An unexpected error occurred.";
-                }
-            }
-            else { errorMessage = "An unexpected error occurred."; }
+            errorMessage = string.IsNullOrWhiteSpace(result.ErrorMessage)
+                ? "An unexpected error occurred."
+                : result.ErrorMessage;
         }
     }
 

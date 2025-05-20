@@ -27,4 +27,8 @@
 		<ProjectReference Include="..\BookOrGetBooked.Shared\BookOrGetBooked.Shared.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="logs\" />
+	</ItemGroup>
+
 </Project>

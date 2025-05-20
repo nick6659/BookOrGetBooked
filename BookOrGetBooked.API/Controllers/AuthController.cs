@@ -1,6 +1,10 @@
 ﻿using BookOrGetBooked.Core.Interfaces;
+using BookOrGetBooked.Core.Services;
 using BookOrGetBooked.Shared.DTOs.Auth;
+using BookOrGetBooked.Shared.DTOs.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 [Route("api/auth")]
 [ApiController]
@@ -11,6 +15,14 @@ public class AuthController : ControllerBase
     public AuthController(IAuthService authService)
     {
         _authService = authService;
+    }
+
+    [HttpGet("test")]
+    public async Task<IActionResult> Test()
+    {
+        _authService.Test();
+
+        return Ok();
     }
 
     [HttpPost("register")]
@@ -32,6 +44,23 @@ public class AuthController : ControllerBase
     {
         var result = await _authService.RefreshTokenAsync(model);
         return result.IsSuccess ? Ok(result) : Unauthorized(result);
+    }
+
+    [Authorize]
+    [HttpGet("me")]
+    public IActionResult GetCurrentUser()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var email = User.FindFirstValue(ClaimTypes.Email);
+
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(email))
+            return Unauthorized();
+
+        return Ok(new CurrentUserDTO
+        {
+            Id = int.Parse(userId),
+            Email = email
+        });
     }
 
 }

@@ -7,43 +7,31 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-<p>Welcome to your new app.</p>
+<div class="home-container">
+    <div class="home-header">
+        <h1>Welcome!</h1>
 
-@if (isAuthenticated)
-{
-    <p>You are logged in.</p>
-    <button class="logout-button" @onclick="HandleLogout">Logout</button>
-}
-else
-{
-    <p>You are not logged in.</p>
-    <button class="login-button" @onclick="GoToLogin">Go to Login</button>
-}
+        <div class="home-actions">
+            <button class="action-button" @onclick="GoToBook">BOOK</button>
+            <span class="or-text">or</span>
+            <button class="action-button" @onclick="GoToGetBooked">GET BOOKED</button>
+        </div>
+
+        <div class="home-links">
+            <button class="profile-button" @onclick="GoToProfile">My Profile</button>
+            <button class="logout-button" @onclick="HandleLogout">Logout</button>
+        </div>
+    </div>
+</div>
 
 @code {
-    private bool isAuthenticated;
-    private bool hasRendered;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender && !hasRendered)
-        {
-            hasRendered = true;
-
-            isAuthenticated = await AuthService.TryRestoreSessionAsync();
-            StateHasChanged();
-        }
-    }
+    private void GoToBook() => Navigation.NavigateTo("/book");
+    private void GoToGetBooked() => Navigation.NavigateTo("/get-booked");
+    private void GoToProfile() => Navigation.NavigateTo("/profile");
 
     private async Task HandleLogout()
     {
         await AuthService.LogoutAsync();
         Navigation.NavigateTo("/login", forceLoad: true);
-    }
-
-    private void GoToLogin()
-    {
-        Navigation.NavigateTo("/login");
     }
 }

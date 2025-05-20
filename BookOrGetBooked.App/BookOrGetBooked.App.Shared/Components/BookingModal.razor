@@ -1,0 +1,158 @@
+﻿@using BookOrGetBooked.App.Shared.Interfaces
+@using BookOrGetBooked.Shared.DTOs.Booking
+@using BookOrGetBooked.Shared.DTOs.Service
+@inject IAuthService AuthService
+@inject IBookingService BookingService
+@inject IUserProfileService UserProfileService
+
+@if (Visible && Service is not null)
+{
+    <div class="modal-overlay" @onclick="Close">
+        <div class="modal-content" @onclick:stopPropagation>
+            <h2>@Service.ServiceType.Name</h2>
+            <p>@Service.Description</p>
+
+            <div class="booking-fields">
+                <label for="date">📅 Date:</label>
+                <input id="date" type="date" @bind="BookingDate" class="booking-input" />
+
+                <label for="time">⏰ Time:</label>
+                <input id="time" type="time" @bind="BookingTime" class="booking-input" />
+
+                <label for="street">📍 Street Address:</label>
+                <input id="street" type="text" @bind="StreetAddress" class="booking-input" placeholder="e.g. Nørregade 12" />
+
+                <div class="address-row">
+                    <div class="address-postal">
+                        <label for="postal">📮 Postal Code:</label>
+                        <input id="postal" type="text" @bind="PostalCode" class="booking-input" placeholder="e.g. 1356" />
+                    </div>
+                    <div class="address-city">
+                        <label for="city">🏙️ City:</label>
+                        <input id="city" type="text" @bind="City" class="booking-input" placeholder="e.g. København" />
+                    </div>
+                </div>
+
+                <label for="city">🏙️ City:</label>
+                <input id="city" type="text" @bind="City" class="booking-input" placeholder="e.g. København" />
+
+                <label for="country">🌍 Country:</label>
+                <input id="country" type="text" @bind="Country" class="booking-input" placeholder="e.g. Denmark" />
+
+                <button type="button" class="autofill-btn" @onclick="LoadAddressFromProfile">
+                    🔄 Use my profile address
+                </button>
+            </div>
+
+            @if (!string.IsNullOrEmpty(StatusMessage))
+            {
+                <p class="status-message @(IsSuccess ? "success" : "error")">@StatusMessage</p>
+            }
+
+            <div class="modal-buttons">
+                <button class="book-btn" @onclick="ConfirmBooking">Book</button>
+                <button class="cancel-btn" @onclick="Close">Cancel</button>
+            </div>
+
+
+        </div>
+    </div>
+
+}
+
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public ServiceResponseDTO? Service { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private DateTime BookingDate { get; set; } = DateTime.Today;
+    private DateTime BookingTime { get; set; } = DateTime.Today.AddHours(12);
+    private string StreetAddress { get; set; } = "";
+    private string City { get; set; } = "";
+    private string PostalCode { get; set; } = "";
+    private string Country { get; set; } = "";
+    private string? StatusMessage;
+    private bool IsSuccess;
+    private bool IsSubmitting;
+
+    private async Task ConfirmBooking()
+    {
+        if (Service is null)
+        {
+            StatusMessage = "No service selected.";
+            IsSuccess = false;
+            return;
+        }
+
+        var user = await AuthService.GetCurrentUserAsync();
+        if (user is null)
+        {
+            StatusMessage = "User not authenticated.";
+            IsSuccess = false;
+            return;
+        }
+
+        var timeSlot = BookingDate.Date + BookingTime.TimeOfDay;
+
+        var booking = new BookingCreateDTO
+        {
+            BookerId = user.Id,
+            ServiceId = Service.Id,
+            TimeSlot = timeSlot,
+            StreetAddress = StreetAddress,
+            City = City,
+            PostalCode = PostalCode,
+            Country = Country
+        };
+
+        try
+        {
+            IsSubmitting = true;
+            await BookingService.CreateBookingAsync(booking);
+
+            StatusMessage = "✅ Booking successful!";
+            IsSuccess = true;
+
+            await Task.Delay(1000);
+            await Close();
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"❌ Booking failed: {ex.Message}";
+            IsSuccess = false;
+        }
+        finally
+        {
+            IsSubmitting = false;
+        }
+
+        // Placeholder for now; you’ll later send to BookingService
+        Console.WriteLine($"Booking '{Service?.ServiceType.Name}' on {BookingDate} at {BookingTime}");
+        await Close();
+    }
+
+    private async Task LoadAddressFromProfile()
+    {
+        try
+        {
+            var profile = await UserProfileService.GetProfileAsync();
+            if (profile is not null)
+            {
+                StreetAddress = profile.Address ?? "";
+                City = profile.City ?? "";
+                PostalCode = profile.PostalCode ?? "";
+                Country = profile.Country ?? "";
+            }
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"⚠️ Failed to load profile: {ex.Message}";
+            IsSuccess = false;
+        }
+    }
+
+    private async Task Close()
+    {
+        await OnClose.InvokeAsync();
+    }
+}

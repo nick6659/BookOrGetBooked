@@ -1,7 +1,8 @@
 ﻿using BookOrGetBooked.App.Shared.Interfaces;
 using BookOrGetBooked.Shared.DTOs.Auth;
-using BookOrGetBooked.Shared.Utilities;
 using BookOrGetBooked.Shared.DTOs.General;
+using BookOrGetBooked.Shared.DTOs.User;
+using BookOrGetBooked.Shared.Utilities;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -13,9 +14,9 @@ namespace BookOrGetBooked.App.Client.Services
         private readonly HttpClient _httpClient;
         private readonly ITokenStorage _tokenStorage;
 
-        public AuthService(HttpClient httpClient, ITokenStorage tokenStorage)
+        public AuthService(IHttpClientFactory httpClientFactory, ITokenStorage tokenStorage)
         {
-            _httpClient = httpClient;
+            _httpClient = httpClientFactory.CreateClient(nameof(IAuthService));
             _tokenStorage = tokenStorage;
         }
 
@@ -23,10 +24,22 @@ namespace BookOrGetBooked.App.Client.Services
         {
             var response = await _httpClient.PostAsJsonAsync("api/auth/register", registerDto);
 
-            if (!response.IsSuccessStatusCode)
+            var result = await response.Content.ReadFromJsonAsync<ResultDto<object>>();
+
+            if (result == null)
+                return (false, "Unexpected server response.");
+
+            if (!result.IsSuccess)
             {
-                var error = await response.Content.ReadAsStringAsync();
-                return (false, error ?? "Registration failed.");
+                // Prioritize the error message if available
+                if (result.Error is not null)
+                    return (false, result.Error.Message);
+
+                // If validation errors are present, return the first one
+                if (result.ValidationErrors?.Any() == true)
+                    return (false, result.ValidationErrors.First().Error);
+
+                return (false, "Registration failed.");
             }
 
             return (true, null);
@@ -109,6 +122,11 @@ namespace BookOrGetBooked.App.Client.Services
         public async Task FlushTokenQueueAsync()
         {
             await _tokenStorage.TryFlushPendingTokenWritesAsync();
+        }
+
+        public async Task<CurrentUserDTO?> GetCurrentUserAsync()
+        {
+            return await _httpClient.GetFromJsonAsync<CurrentUserDTO>("api/auth/me");
         }
 
     }

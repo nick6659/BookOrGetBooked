@@ -1,0 +1,23 @@
+﻿@using BookOrGetBooked.Shared.DTOs.Service
+@using BookOrGetBooked.Shared.DTOs.ServiceType
+@using BookOrGetBooked.Shared.DTOs.Currency
+@inject NavigationManager Navigation
+
+<div class="service-card" @onclick="@HandleClick">
+    <h3>@Service.Name</h3>
+    <p>@Service.Description</p>
+    <p><strong>Type:</strong> @Service.ServiceType.Name</p>
+    <p><strong>Price:</strong> @Service.Currency.Symbol @Service.Price</p>
+</div>
+
+@code {
+    [Parameter]
+    public required ServiceResponseDTO Service { get; set; }
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    private async Task HandleClick()
+    {
+        await OnClick.InvokeAsync(null);
+    }
+}

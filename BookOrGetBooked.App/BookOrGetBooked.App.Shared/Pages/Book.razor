@@ -1,0 +1,121 @@
+﻿@page "/book"
+@using BookOrGetBooked.App.Shared.Components
+@using BookOrGetBooked.App.Shared.Interfaces
+@using BookOrGetBooked.Shared.DTOs.Service
+@inject IJSRuntime JS
+@inject IAuthService AuthService
+@inject IBookingService BookingService
+@inject NavigationManager Navigation
+
+<div class="book-page">
+
+    <div class="sticky-header @(isHeaderHidden ? "hide" : "")" @ref="stickyHeaderRef" >
+        <h1 class="book-header">📚 Book a Service</h1>
+        <input class="search-input" type="text" value="@searchQuery" @oninput="OnSearchInput" placeholder="Search services..." />
+    </div>
+
+    <div class="scroll-wrapper" @ref=" scrollWrapperRef" @onwheel="HandleScroll" >
+        <div class="services-list">
+            @if (isLoading)
+            {
+                <p>Loading services...</p>
+            }
+            else if (filteredServices.Count == 0)
+            {
+                <p class="no-results">No services found.</p>
+            }
+            else
+            {
+                @foreach (var service in filteredServices)
+                {
+                    <BookService Service="service" OnClick="() => OpenBookingModal(service)" />
+                }
+            }
+        </div>
+    </div>
+    <BookingModal Visible="isModalOpen" Service="selectedService" OnClose="CloseBookingModal" />
+</div>
+
+@code {
+    private List<ServiceResponseDTO> services = new();
+    private List<ServiceResponseDTO> filteredServices = new();
+    private string searchQuery = "";
+    private bool isLoading = true;
+    private ElementReference scrollWrapperRef;
+    private ElementReference stickyHeaderRef;
+    private bool isHeaderHidden = false;
+    private double lastScrollTop = 0;
+    private bool isModalOpen = false;
+    private ServiceResponseDTO? selectedService;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            services = await BookingService.GetAvailableServicesAsync();
+            filteredServices = services;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error fetching services: " + ex.Message);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void NavigateToService(int id)
+    {
+        Navigation.NavigateTo($"/service/{id}");
+    }
+
+    private void FilterServices()
+    {
+        if (string.IsNullOrWhiteSpace(searchQuery))
+        {
+            filteredServices = services;
+        }
+        else
+        {
+            filteredServices = services
+                .Where(s => s.ServiceType.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+    }
+
+    private void OnSearchInput(ChangeEventArgs e)
+    {
+        searchQuery = e.Value?.ToString() ?? "";
+        FilterServices();
+    }
+
+    private async Task HandleScroll(WheelEventArgs e)
+    {
+        var currentScrollTop = await JS.InvokeAsync<double>("getScrollTop", scrollWrapperRef);
+
+        if (currentScrollTop > lastScrollTop + 10)
+        {
+            isHeaderHidden = true;
+        }
+        else if (currentScrollTop < lastScrollTop - 10)
+        {
+            isHeaderHidden = false;
+        }
+
+        lastScrollTop = currentScrollTop;
+    }
+
+    private void OpenBookingModal(ServiceResponseDTO service)
+    {
+        selectedService = service;
+        isModalOpen = true;
+    }
+
+    private Task CloseBookingModal()
+    {
+        isModalOpen = false;
+        selectedService = null;
+        return Task.CompletedTask;
+    }
+}

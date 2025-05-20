@@ -61,5 +61,410 @@
     "Price": 150.0,
     "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
     "CurrencyId": 2
+  },
+  {
+    "Id": 8,
+    "Name": "Strategy Session",
+    "Description": "Strategy Session service offered by a skilled professional.",
+    "ServiceTypeId": 1,
+    "Price": 35.81,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 1
+  },
+  {
+    "Id": 9,
+    "Name": "Therapy Session",
+    "Description": "Therapy Session service offered by a skilled professional.",
+    "ServiceTypeId": 1,
+    "Price": 243.15,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 1
+  },
+  {
+    "Id": 10,
+    "Name": "Photography",
+    "Description": "Photography service offered by a skilled professional.",
+    "ServiceTypeId": 3,
+    "Price": 100.44,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 3
+  },
+  {
+    "Id": 11,
+    "Name": "Logo Design",
+    "Description": "Logo Design service offered by a skilled professional.",
+    "ServiceTypeId": 3,
+    "Price": 278.24,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 4
+  },
+  {
+    "Id": 12,
+    "Name": "App Development",
+    "Description": "App Development service offered by a skilled professional.",
+    "ServiceTypeId": 4,
+    "Price": 71.02,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 2
+  },
+  {
+    "Id": 13,
+    "Name": "Haircut",
+    "Description": "Haircut service offered by a skilled professional.",
+    "ServiceTypeId": 3,
+    "Price": 50.77,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 3
+  },
+  {
+    "Id": 14,
+    "Name": "Dog Walking",
+    "Description": "Dog Walking service offered by a skilled professional.",
+    "ServiceTypeId": 2,
+    "Price": 145.03,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 4
+  },
+  {
+    "Id": 15,
+    "Name": "Yoga Class",
+    "Description": "Yoga Class service offered by a skilled professional.",
+    "ServiceTypeId": 3,
+    "Price": 248.68,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 2
+  },
+  {
+    "Id": 16,
+    "Name": "Massage",
+    "Description": "Massage service offered by a skilled professional.",
+    "ServiceTypeId": 3,
+    "Price": 171.06,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 3
+  },
+  {
+    "Id": 17,
+    "Name": "Cooking Class",
+    "Description": "Cooking Class service offered by a skilled professional.",
+    "ServiceTypeId": 1,
+    "Price": 87.08,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 2
+  },
+  {
+    "Id": 18,
+    "Name": "Tutoring",
+    "Description": "Tutoring service offered by a skilled professional.",
+    "ServiceTypeId": 2,
+    "Price": 291.8,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 1
+  },
+  {
+    "Id": 19,
+    "Name": "Resume Review",
+    "Description": "Resume Review service offered by a skilled professional.",
+    "ServiceTypeId": 1,
+    "Price": 290.99,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 2
+  },
+  {
+    "Id": 20,
+    "Name": "Marketing Audit",
+    "Description": "Marketing Audit service offered by a skilled professional.",
+    "ServiceTypeId": 4,
+    "Price": 259.12,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 3
+  },
+  {
+    "Id": 21,
+    "Name": "House Cleaning",
+    "Description": "House Cleaning service offered by a skilled professional.",
+    "ServiceTypeId": 1,
+    "Price": 233.34,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 1
+  },
+  {
+    "Id": 22,
+    "Name": "Fitness Training",
+    "Description": "Fitness Training service offered by a skilled professional.",
+    "ServiceTypeId": 4,
+    "Price": 109.65,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 2
+  },
+  {
+    "Id": 23,
+    "Name": "Voiceover",
+    "Description": "Voiceover service offered by a skilled professional.",
+    "ServiceTypeId": 1,
+    "Price": 62.8,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 4
+  },
+  {
+    "Id": 24,
+    "Name": "Copywriting",
+    "Description": "Copywriting service offered by a skilled professional.",
+    "ServiceTypeId": 4,
+    "Price": 250.95,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 4
+  },
+  {
+    "Id": 25,
+    "Name": "Web Hosting",
+    "Description": "Web Hosting service offered by a skilled professional.",
+    "ServiceTypeId": 3,
+    "Price": 152.2,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 2
+  },
+  {
+    "Id": 26,
+    "Name": "SEO Optimization",
+    "Description": "SEO Optimization service offered by a skilled professional.",
+    "ServiceTypeId": 3,
+    "Price": 89.71,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 2
+  },
+  {
+    "Id": 27,
+    "Name": "Financial Planning",
+    "Description": "Financial Planning service offered by a skilled professional.",
+    "ServiceTypeId": 4,
+    "Price": 155.76,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 1
+  },
+  {
+    "Id": 28,
+    "Name": "Career Coaching",
+    "Description": "Career Coaching service offered by a skilled professional.",
+    "ServiceTypeId": 1,
+    "Price": 147.92,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 2
+  },
+  {
+    "Id": 29,
+    "Name": "Babysitting",
+    "Description": "Babysitting service offered by a skilled professional.",
+    "ServiceTypeId": 1,
+    "Price": 275.06,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 1
+  },
+  {
+    "Id": 30,
+    "Name": "Gardening",
+    "Description": "Gardening service offered by a skilled professional.",
+    "ServiceTypeId": 4,
+    "Price": 112.95,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 2
+  },
+  {
+    "Id": 31,
+    "Name": "Interior Design",
+    "Description": "Interior Design service offered by a skilled professional.",
+    "ServiceTypeId": 4,
+    "Price": 261.17,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 2
+  },
+  {
+    "Id": 32,
+    "Name": "Painting",
+    "Description": "Painting service offered by a skilled professional.",
+    "ServiceTypeId": 3,
+    "Price": 213.68,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 1
+  },
+  {
+    "Id": 33,
+    "Name": "Translation",
+    "Description": "Translation service offered by a skilled professional.",
+    "ServiceTypeId": 1,
+    "Price": 186.58,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 4
+  },
+  {
+    "Id": 34,
+    "Name": "Proofreading",
+    "Description": "Proofreading service offered by a skilled professional.",
+    "ServiceTypeId": 3,
+    "Price": 131.94,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 3
+  },
+  {
+    "Id": 35,
+    "Name": "Legal Advice",
+    "Description": "Legal Advice service offered by a skilled professional.",
+    "ServiceTypeId": 2,
+    "Price": 75.39,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 2
+  },
+  {
+    "Id": 36,
+    "Name": "Tech Support",
+    "Description": "Tech Support service offered by a skilled professional.",
+    "ServiceTypeId": 4,
+    "Price": 206.03,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 4
+  },
+  {
+    "Id": 37,
+    "Name": "UX Consultation",
+    "Description": "UX Consultation service offered by a skilled professional.",
+    "ServiceTypeId": 4,
+    "Price": 236.05,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 1
+  },
+  {
+    "Id": 38,
+    "Name": "Branding Workshop",
+    "Description": "Branding Workshop service offered by a skilled professional.",
+    "ServiceTypeId": 3,
+    "Price": 121.17,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 4
+  },
+  {
+    "Id": 39,
+    "Name": "Dance Lesson",
+    "Description": "Dance Lesson service offered by a skilled professional.",
+    "ServiceTypeId": 2,
+    "Price": 243.31,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 3
+  },
+  {
+    "Id": 40,
+    "Name": "Music Lesson",
+    "Description": "Music Lesson service offered by a skilled professional.",
+    "ServiceTypeId": 1,
+    "Price": 193.32,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 3
+  },
+  {
+    "Id": 41,
+    "Name": "Nutrition Planning",
+    "Description": "Nutrition Planning service offered by a skilled professional.",
+    "ServiceTypeId": 3,
+    "Price": 216.34,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 3
+  },
+  {
+    "Id": 42,
+    "Name": "Business Plan",
+    "Description": "Business Plan service offered by a skilled professional.",
+    "ServiceTypeId": 3,
+    "Price": 58.04,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 4
+  },
+  {
+    "Id": 43,
+    "Name": "Startup Pitch Review",
+    "Description": "Startup Pitch Review service offered by a skilled professional.",
+    "ServiceTypeId": 4,
+    "Price": 157.89,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 1
+  },
+  {
+    "Id": 44,
+    "Name": "CV Writing",
+    "Description": "CV Writing service offered by a skilled professional.",
+    "ServiceTypeId": 1,
+    "Price": 228.22,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 2
+  },
+  {
+    "Id": 45,
+    "Name": "LinkedIn Profile Polish",
+    "Description": "LinkedIn Profile Polish service offered by a skilled professional.",
+    "ServiceTypeId": 3,
+    "Price": 168.32,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 4
+  },
+  {
+    "Id": 46,
+    "Name": "Product Photography",
+    "Description": "Product Photography service offered by a skilled professional.",
+    "ServiceTypeId": 1,
+    "Price": 289.82,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 4
+  },
+  {
+    "Id": 47,
+    "Name": "Drone Footage",
+    "Description": "Drone Footage service offered by a skilled professional.",
+    "ServiceTypeId": 2,
+    "Price": 123.6,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 1
+  },
+  {
+    "Id": 48,
+    "Name": "Content Editing",
+    "Description": "Content Editing service offered by a skilled professional.",
+    "ServiceTypeId": 2,
+    "Price": 134.16,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 2
+  },
+  {
+    "Id": 49,
+    "Name": "Video Editing",
+    "Description": "Video Editing service offered by a skilled professional.",
+    "ServiceTypeId": 4,
+    "Price": 244.77,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 4
+  },
+  {
+    "Id": 50,
+    "Name": "Animation Creation",
+    "Description": "Animation Creation service offered by a skilled professional.",
+    "ServiceTypeId": 4,
+    "Price": 181.07,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 1
+  },
+  {
+    "Id": 51,
+    "Name": "Craft Workshop",
+    "Description": "Craft Workshop service offered by a skilled professional.",
+    "ServiceTypeId": 2,
+    "Price": 207.72,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 2
+  },
+  {
+    "Id": 52,
+    "Name": "Tailoring",
+    "Description": "Tailoring service offered by a skilled professional.",
+    "ServiceTypeId": 2,
+    "Price": 123.41,
+    "ProviderId": "b5d466dd-128d-426b-93ac-1177fe1f26fe",
+    "CurrencyId": 4
   }
 ]

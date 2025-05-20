@@ -2,8 +2,11 @@ using Blazored.LocalStorage;
 using BookOrGetBooked.App.Client.Services;
 using BookOrGetBooked.App.Client.Services.Http;
 using BookOrGetBooked.App.Shared.Interfaces;
+using BookOrGetBooked.App.Web;
 using BookOrGetBooked.App.Web.Components;
 using BookOrGetBooked.App.Web.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace BookOrGetBooked.App
 {
@@ -20,7 +23,7 @@ namespace BookOrGetBooked.App
             builder.Services.AddBlazoredLocalStorage();
 
             var config = builder.Configuration;
-            var apiBaseUrl = config["ApiSettings:BaseUrl"] 
+            var apiBaseUrl = config["ApiSettings:BaseUrl"]
                 ?? throw new InvalidOperationException("Missing 'ApiSettings:BaseUrl' in appsettings.json.");
 
             builder.Services.AddScoped<ITokenStorage, WebTokenStorage>();
@@ -28,11 +31,31 @@ namespace BookOrGetBooked.App
 
             builder.Services.AddTransient<RefreshTokenHandler>();
 
-            builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
+            builder.Services.AddHttpClient(nameof(IAuthService), client =>
             {
                 client.BaseAddress = new Uri(apiBaseUrl);
             })
             .AddHttpMessageHandler<RefreshTokenHandler>();
+
+            builder.Services.AddHttpClient(nameof(IBookingService), client =>
+            {
+                client.BaseAddress = new Uri(apiBaseUrl);
+            });
+            builder.Services.AddScoped<IBookingService, BookingService>();
+
+            builder.Services.AddHttpClient(nameof(IUserProfileService), client =>
+            {
+                client.BaseAddress = new Uri(apiBaseUrl);
+            }).AddHttpMessageHandler<RefreshTokenHandler>();
+
+            builder.Services.AddScoped<IUserProfileService, UserProfileService>();
+
+            builder.Services.AddScoped<IAuthService, AuthService>();
+
+            builder.Services.AddAuthentication("FakeScheme")
+                .AddScheme<AuthenticationSchemeOptions, FakeAuthHandler>("FakeScheme", _ => { });
+
+            builder.Services.AddAuthorization();
 
             var app = builder.Build();
 
@@ -48,6 +71,9 @@ namespace BookOrGetBooked.App
 
             app.UseStaticFiles();
             app.UseAntiforgery();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapRazorComponents<AppRoot>()
                 .AddInteractiveServerRenderMode()

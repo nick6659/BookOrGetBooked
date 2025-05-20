@@ -42,7 +42,7 @@ namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
             var bookingStatusSeeder = new BookingStatusSeedingService(_context);
             bookingStatusSeeder.SeedBookingStatusesFromJson();
 
-            // Add more seeding services as needed
+
         }
 
         private string SeedDefaultUser()
@@ -53,7 +53,7 @@ namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
             {
                 var newUser = new ApplicationUser
                 {
-                    Id = "b5d466dd-128d-426b-93ac-1177fe1f26fe", // 👈 Matches ProviderId in services.json
+                    Id = "b5d466dd-128d-426b-93ac-1177fe1f26fe", // Matches ProviderId in services.json
                     UserName = "admin",
                     Email = "admin@example.com",
                     EmailConfirmed = true

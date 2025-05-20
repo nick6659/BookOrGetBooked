@@ -1,0 +1,116 @@
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.booking-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.booking-input {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.book-btn {
+    background-color: #2b90d9;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    background-color: #eee;
+    color: #333;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.status-message {
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+    .status-message.success {
+        color: green;
+    }
+
+    .status-message.error {
+        color: red;
+    }
+
+.autofill-btn {
+    align-self: flex-start;
+    margin-bottom: 10px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.address-row {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+}
+
+.address-postal,
+.address-city {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+}
+
+.address-postal {
+    flex: 1;
+}
+
+.address-city {
+    flex: 4;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.modal-content p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}

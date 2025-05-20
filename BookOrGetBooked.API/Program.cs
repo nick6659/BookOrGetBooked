@@ -53,7 +53,11 @@ namespace BookOrGetBooked.API
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
             var key = Encoding.UTF8.GetBytes(jwtSettings["Secret"]!);
 
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
@@ -85,9 +89,9 @@ namespace BookOrGetBooked.API
                     }
                 };
             });
+            builder.Services.AddAuthorization();
 
             // Dependency Injection for repositories and services
-            builder.Services.AddScoped<UserManager<ApplicationUser>>();
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
@@ -102,7 +106,7 @@ namespace BookOrGetBooked.API
             builder.Services.AddHttpClient<IGoogleDistanceService, GoogleDistanceService>();
 
             // Register centralized DataSeederService
-            //builder.Services.AddScoped<DataSeederService>();
+            builder.Services.AddScoped<DataSeederService>();
 
             // Add AutoMapper and register the base profile
             builder.Services.AddAutoMapper(typeof(MappingProfileBase));
@@ -131,10 +135,10 @@ namespace BookOrGetBooked.API
                     try
                     {
                         dbContext.Database.Migrate();
-                        /*
+                        
                         var dataSeeder = scope.ServiceProvider.GetRequiredService<DataSeederService>();
                         dataSeeder.SeedAll();
-                        */
+                        
                     }
                     catch (Exception ex)
                     {

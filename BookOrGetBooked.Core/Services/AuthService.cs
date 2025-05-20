@@ -24,6 +24,12 @@ public class AuthService : IAuthService
         _tokenService = tokenService;
     }
 
+    public void Test()
+    {
+        var allUsers = _userManager.Users.ToList();
+        Console.WriteLine("here");
+    }
+
     public async Task<Result> RegisterAsync(RegisterRequestDto model, CancellationToken cancellationToken = default)
     {
         var existingEmailUser = await _userManager.FindByEmailAsync(model.Email);
@@ -70,6 +76,8 @@ public class AuthService : IAuthService
         user.RefreshToken = TokenHasher.Hash(rawRefreshToken);
         user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
         await _userManager.UpdateAsync(user);
+
+        var allUsers = _userManager.Users.ToList();
 
         return Result<TokenResponseDto>.Success(new TokenResponseDto
         {

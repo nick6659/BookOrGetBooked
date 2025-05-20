@@ -1,20 +1,34 @@
 ﻿@page "/"
 @using BookOrGetBooked.App.Shared.Interfaces
+@using BookOrGetBooked.App.Shared.Layout
 @inject IAuthService AuthService
 @inject NavigationManager Navigation
+
+<ErrorModal @ref="errorModal" />
 
 <p>Loading...</p>
 
 @code {
+    private ErrorModal? errorModal;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var isAuth = await AuthService.TryRestoreSessionAsync();
-            if (isAuth)
-                Navigation.NavigateTo("/home", forceLoad: true);
-            else
-                Navigation.NavigateTo("/login", forceLoad: true);
+            try
+            {
+                var isAuth = await AuthService.TryRestoreSessionAsync();
+                if (isAuth)
+                    Navigation.NavigateTo("/home", forceLoad: true);
+                else
+                    Navigation.NavigateTo("/login", forceLoad: true);
+            }
+            catch (Exception ex)
+            {
+                // Show modal if API is unreachable or anything fails
+                if (errorModal != null)
+                    await errorModal.ShowAsync("Could not connect to server. Please check your connection and try again.", "Connection Error");
+            }
         }
     }
 }

@@ -19,7 +19,7 @@ namespace BookOrGetBooked.Core.Models
         public required int StatusId { get; set; }
         public required BookingStatus Status { get; set; }
 
-        public string ServiceAddress { get; set; } = string.Empty;
+        public string StreetAddress { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public string PostalCode { get; set; } = string.Empty;
         public string Country { get; set; } = string.Empty;
