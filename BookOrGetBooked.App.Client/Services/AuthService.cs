@@ -81,7 +81,6 @@ namespace BookOrGetBooked.App.Client.Services
 
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-            // Optionally test the token (e.g., by pinging an endpoint)
             var test = await _httpClient.GetAsync("api/profile/me");
 
             if (test.StatusCode == HttpStatusCode.Unauthorized)
@@ -126,6 +125,10 @@ namespace BookOrGetBooked.App.Client.Services
 
         public async Task<CurrentUserDTO?> GetCurrentUserAsync()
         {
+            var restored = await TryRestoreSessionAsync();
+            if (!restored)
+                return null;
+
             return await _httpClient.GetFromJsonAsync<CurrentUserDTO>("api/auth/me");
         }
 

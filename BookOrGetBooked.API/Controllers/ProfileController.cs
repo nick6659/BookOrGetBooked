@@ -46,7 +46,8 @@ public class ProfileController : ControllerBase
             Address = user.Address,
             City = user.City,
             PostalCode = user.PostalCode,
-            Country = user.Country
+            Country = user.Country,
+            PreferredCurrencyId = user.PreferredCurrencyId,
         };
 
         return Ok(Result<UserProfileResponseDto>.Success(response));
@@ -91,7 +92,8 @@ public class ProfileController : ControllerBase
             Address = user.Address,
             City = user.City,
             PostalCode = user.PostalCode,
-            Country = user.Country
+            Country = user.Country,
+            PreferredCurrencyId = user.PreferredCurrencyId,
         };
 
         return Ok(Result<UserProfileResponseDto>.Success(updatedProfile));

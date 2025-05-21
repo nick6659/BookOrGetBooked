@@ -17,14 +17,6 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
-    [HttpGet("test")]
-    public async Task<IActionResult> Test()
-    {
-        _authService.Test();
-
-        return Ok();
-    }
-
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDto model)
     {
@@ -58,7 +50,7 @@ public class AuthController : ControllerBase
 
         return Ok(new CurrentUserDTO
         {
-            Id = int.Parse(userId),
+            Id = userId,
             Email = email
         });
     }

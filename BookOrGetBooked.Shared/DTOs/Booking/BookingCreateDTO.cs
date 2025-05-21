@@ -2,7 +2,7 @@
 {
     public class BookingCreateDTO
     {
-        public int BookerId { get; set; }
+        public string BookerId { get; set; } = string.Empty;
         public int ServiceId { get; set; }
         public DateTime TimeSlot { get; set; }
 

@@ -17,6 +17,7 @@ public class BookingRepository(
         return await Query()
             .Include(b => b.Status)  // Load Status
             .Include(b => b.Service) // Load the full Service
+                .ThenInclude(s => s!.Provider)
             .FirstOrDefaultAsync(b => b.Id == id);
     }
 
@@ -71,6 +72,11 @@ public class BookingRepository(
         if (filters.BookingIds != null && filters.BookingIds.Count > 0)
         {
             query = query.Where(b => filters.BookingIds.Contains(b.Id));
+        }
+
+        if (filters.ServiceId.HasValue)
+        {
+            query = query.Where(b => b.ServiceId == filters.ServiceId.Value);
         }
 
         return query;

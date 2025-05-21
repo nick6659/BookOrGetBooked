@@ -1,12 +1,14 @@
 ﻿using BookOrGetBooked.Core.Interfaces;
 using BookOrGetBooked.Shared.DTOs.ServiceType;
 using BookOrGetBooked.Shared.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BookOrGetBooked.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ServiceTypeController : ControllerBase
@@ -76,6 +78,16 @@ namespace BookOrGetBooked.API.Controllers
                 return NotFound(new { message = result.Error });
             }
             return NoContent();
+        }
+
+        [HttpGet("available")]
+        public async Task<IActionResult> GetAvailableForCurrentUser()
+        {
+            var userId = User.FindFirst("sub")?.Value; // Or use a custom claim/key
+            if (userId == null) return Unauthorized();
+
+            var types = await _serviceTypeService.GetAvailableForUserAsync(userId);
+            return Ok(types);
         }
     }
 }

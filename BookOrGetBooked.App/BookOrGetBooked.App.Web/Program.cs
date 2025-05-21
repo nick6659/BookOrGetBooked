@@ -35,7 +35,7 @@ namespace BookOrGetBooked.App
             {
                 client.BaseAddress = new Uri(apiBaseUrl);
             })
-            .AddHttpMessageHandler<RefreshTokenHandler>();
+                .AddHttpMessageHandler<RefreshTokenHandler>();
 
             builder.Services.AddHttpClient(nameof(IBookingService), client =>
             {
@@ -43,10 +43,30 @@ namespace BookOrGetBooked.App
             });
             builder.Services.AddScoped<IBookingService, BookingService>();
 
+            builder.Services.AddHttpClient(nameof(IServiceService), client =>
+            {
+                client.BaseAddress = new Uri(apiBaseUrl);
+            });
+            builder.Services.AddScoped<IServiceService, ServiceService>();
+
+            builder.Services.AddHttpClient(nameof(IBookingStatusService), client =>
+            {
+                client.BaseAddress = new Uri(apiBaseUrl);
+            });
+            builder.Services.AddScoped<IBookingStatusService, BookingStatusService>();
+
+            builder.Services.AddHttpClient(nameof(ICurrencyService), client =>
+            {
+                client.BaseAddress = new Uri(apiBaseUrl);
+            });
+            builder.Services.AddScoped<ICurrencyService, CurrencyService>();
+
             builder.Services.AddHttpClient(nameof(IUserProfileService), client =>
             {
                 client.BaseAddress = new Uri(apiBaseUrl);
-            }).AddHttpMessageHandler<RefreshTokenHandler>();
+            })
+                .AddHttpMessageHandler<RefreshTokenHandler>();
+
 
             builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 

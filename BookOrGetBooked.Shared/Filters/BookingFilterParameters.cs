@@ -8,6 +8,8 @@ namespace BookOrGetBooked.Shared.Filters
         public string? BookerId { get; set; } // The user who booked the service
         public string? ProviderId { get; set; } // The user who provides the service
 
+        public int? ServiceId { get; set; }
+
         public DateTime? StartDate { get; set; } = null;
 
         private DateTime? _endDate;
@@ -77,6 +79,11 @@ namespace BookOrGetBooked.Shared.Filters
             if (PageSize.HasValue && PageSize <= 0)
             {
                 errors.Add(new ValidationError(nameof(PageSize), ErrorCodes.Validation.OutOfRange, "PageSize must be a positive number."));
+            }
+
+            if (ServiceId.HasValue && ServiceId <= 0)
+            {
+                errors.Add(new ValidationError(nameof(ServiceId), ErrorCodes.Validation.OutOfRange, "ServiceId must be a positive number."));
             }
 
             return errors;

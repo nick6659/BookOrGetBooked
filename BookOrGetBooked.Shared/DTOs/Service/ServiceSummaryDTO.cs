@@ -2,8 +2,10 @@
 {
     public class ServiceSummaryDTO
     {
-        public int Id { get; set; }
         public required string ServiceName { get; set; }
         public required string Description { get; set; }
+
+        public required string ProviderFullName { get; set; }
+        public string? ProviderPhoneNumber { get; set; }
     }
 }

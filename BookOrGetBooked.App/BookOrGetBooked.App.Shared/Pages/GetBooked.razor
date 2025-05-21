@@ -1,23 +1,27 @@
-﻿@page "/book"
+﻿@page "/get-booked"
+@attribute [Authorize]
+
 @using BookOrGetBooked.App.Shared.Components
 @using BookOrGetBooked.App.Shared.Interfaces
 @using BookOrGetBooked.Shared.DTOs.Service
+@using Microsoft.AspNetCore.Authorization
 @inject IJSRuntime JS
 @inject IAuthService AuthService
-@inject IBookingService BookingService
+@inject IServiceService ServiceService
 @inject NavigationManager Navigation
 
-<div class="book-services-page">
+<div class="provider-services-page">
     <div class="page-header @(isHeaderHidden ? "hide" : "")" @ref="stickyHeaderRef">
-        <h1 class="page-title">📚 Book a Service</h1>
-        <input class="search-box" type="text" value="@searchQuery" @oninput="OnSearchInput" placeholder="Search services..." />
+        <h1 class="page-title">📈 My Services</h1>
+        <input class="search-box" type="text" value="@searchQuery" @oninput="OnSearchInput" placeholder="Search your services..." />
+        <button class="add-button" @onclick="OpenAddServiceModal">➕ Add New Service</button>
     </div>
 
-    <div class="scroll-wrapper" @ref="scrollWrapperRef" @onscroll="HandleScroll">
+    <div class="scroll-wrapper" @ref="scrollWrapperRef" @onwheel="HandleScroll">
         <div class="services-list">
             @if (isLoading)
             {
-                <p>Loading services...</p>
+                <p>Loading your services...</p>
             }
             else if (filteredServices.Count == 0)
             {
@@ -27,13 +31,16 @@
             {
                 @foreach (var service in filteredServices)
                 {
-                    <ServiceCard Service="service" OnClick="() => OpenBookingModal(service)" />
+                    <ServiceCard Service="service">
+                        <button class="view-bookings-button" @onclick="() => OpenBookingListModal(service)">📋 See Bookings</button>
+                    </ServiceCard>
                 }
             }
         </div>
     </div>
 
-    <BookingModal Visible="isModalOpen" Service="selectedService" OnClose="CloseBookingModal" />
+    <CreateServiceModal Visible="isAddModalOpen" OnClose="CloseAddServiceModal" />
+    <ServiceBookingsModal Service="selectedService" Visible="isBookingListOpen" OnClose="CloseBookingListModal" />
 </div>
 
 @code {
@@ -41,23 +48,27 @@
     private List<ServiceResponseDTO> filteredServices = new();
     private string searchQuery = "";
     private bool isLoading = true;
+    private bool isAddModalOpen = false;
+    private bool isBookingListOpen = false;
     private ElementReference scrollWrapperRef;
     private ElementReference stickyHeaderRef;
     private bool isHeaderHidden = false;
     private double lastScrollTop = 0;
-    private bool isModalOpen = false;
     private ServiceResponseDTO? selectedService;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            services = await BookingService.GetAvailableServicesAsync();
+            var user = await AuthService.GetCurrentUserAsync();
+            if (user is null) return;
+
+            services = await ServiceService.GetServicesByProviderAsync(user.Id);
             filteredServices = services;
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error fetching services: " + ex.Message);
+            Console.WriteLine("Error loading services: " + ex.Message);
         }
         finally
         {
@@ -65,23 +76,11 @@
         }
     }
 
-    private void NavigateToService(int id)
-    {
-        Navigation.NavigateTo($"/service/{id}");
-    }
-
     private void FilterServices()
     {
-        if (string.IsNullOrWhiteSpace(searchQuery))
-        {
-            filteredServices = services;
-        }
-        else
-        {
-            filteredServices = services
-                .Where(s => s.ServiceType.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-        }
+        filteredServices = string.IsNullOrWhiteSpace(searchQuery)
+            ? services
+            : services.Where(s => s.ServiceType.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
     }
 
     private void OnSearchInput(ChangeEventArgs e)
@@ -90,7 +89,7 @@
         FilterServices();
     }
 
-    private async Task HandleScroll()
+    private async Task HandleScroll(WheelEventArgs e)
     {
         var currentScrollTop = await JS.InvokeAsync<double>("getScrollTop", scrollWrapperRef);
 
@@ -110,16 +109,19 @@
         lastScrollTop = currentScrollTop;
     }
 
-    private void OpenBookingModal(ServiceResponseDTO service)
+    private void OpenAddServiceModal() => isAddModalOpen = true;
+    private Task CloseAddServiceModal() { isAddModalOpen = false; return Task.CompletedTask; }
+
+    private void OpenBookingListModal(ServiceResponseDTO service)
     {
         selectedService = service;
-        isModalOpen = true;
+        isBookingListOpen = true;
     }
 
-    private Task CloseBookingModal()
+    private Task CloseBookingListModal()
     {
-        isModalOpen = false;
         selectedService = null;
+        isBookingListOpen = false;
         return Task.CompletedTask;
     }
 }

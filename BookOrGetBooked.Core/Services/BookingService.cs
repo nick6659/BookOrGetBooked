@@ -15,14 +15,14 @@ public class BookingService(
     ILogger<BookingService> logger
     ) : IBookingService
 {
-    public async Task<Result<BookingResponseDTO>> CreateBookingAsync(BookingCreateDTO bookingRequest)
+    public async Task<Result<BookingSummaryDTO>> CreateBookingAsync(BookingCreateDTO bookingRequest)
     {
         try
         {
             var service = await serviceService.GetServiceAsync(bookingRequest.ServiceId);
             if (!service.IsSuccess || service.Data == null)
             {
-                return Result<BookingResponseDTO>.Failure(ErrorCodes.Resource.NotFound);
+                return Result<BookingSummaryDTO>.Failure(ErrorCodes.Resource.NotFound);
             }
 
             var booking = mapper.Map<Booking>(bookingRequest);
@@ -32,14 +32,14 @@ public class BookingService(
             // Fetch the booking again to ensure Status is included
             var bookingWithStatus = await bookingRepository.GetByIdAsync(booking.Id);
 
-            var bookingResponse = mapper.Map<BookingResponseDTO>(bookingWithStatus);
+            var bookingResponse = mapper.Map<BookingSummaryDTO>(bookingWithStatus);
 
-            return Result<BookingResponseDTO>.Success(bookingResponse);
+            return Result<BookingSummaryDTO>.Success(bookingResponse);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error occurred while creating a booking. Request: {@BookingRequest}", bookingRequest);
-            return Result<BookingResponseDTO>.Failure(ErrorCodes.Server.InternalServerError);
+            return Result<BookingSummaryDTO>.Failure(ErrorCodes.Server.InternalServerError);
         }
     }
 
@@ -139,6 +139,34 @@ public class BookingService(
         catch (Exception ex)
         {
             logger.LogError(ex, "Error occurred while updating booking with ID {BookingId}.", id);
+            return Result<BookingResponseDTO>.Failure(ErrorCodes.Server.InternalServerError);
+        }
+    }
+
+    public async Task<Result<BookingResponseDTO>> UpdateBookingByProviderAsync(int bookingId, ServiceProviderBookingUpdateDTO dto)
+    {
+        try
+        {
+            var booking = await bookingRepository.GetByIdAsync(bookingId);
+            if (booking is null)
+                return Result<BookingResponseDTO>.Failure(ErrorCodes.Resource.NotFound);
+
+            booking.TimeSlot = dto.TimeSlot;
+            booking.StreetAddress = dto.StreetAddress;
+            booking.City = dto.City;
+            booking.PostalCode = dto.PostalCode;
+            booking.Country = dto.Country;
+            booking.StatusId = dto.BookingStatusId;
+
+            await bookingRepository.UpdateAsync(booking);
+            booking = await bookingRepository.GetByIdAsync(bookingId);
+
+            var updated = mapper.Map<BookingResponseDTO>(booking);
+            return Result<BookingResponseDTO>.Success(updated);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to update booking by provider.");
             return Result<BookingResponseDTO>.Failure(ErrorCodes.Server.InternalServerError);
         }
     }

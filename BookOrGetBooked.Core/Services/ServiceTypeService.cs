@@ -41,5 +41,16 @@ namespace BookOrGetBooked.Core.Services
             var responseDto = _mapper.Map<ServiceTypeResponseDTO>(existingServiceType);
             return Result<ServiceTypeResponseDTO>.Success(responseDto);
         }
+
+        public async Task<List<ServiceTypeResponseDTO>> GetAvailableForUserAsync(string userId)
+        {
+            var allTypes = await _serviceTypeRepository.GetAllAsync();
+            var availableTypes = allTypes
+                .Where(st => st.IsSystemDefined || st.CreatedByUserId == userId)
+                .ToList();
+
+            return _mapper.Map<List<ServiceTypeResponseDTO>>(availableTypes);
+        }
+
     }
 }

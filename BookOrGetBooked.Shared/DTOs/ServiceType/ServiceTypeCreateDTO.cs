@@ -10,5 +10,7 @@ namespace BookOrGetBooked.Shared.DTOs.ServiceType
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public bool IsSystemDefined { get; set; }
+        public string? CreatedByUserId { get; set; }
     }
 }

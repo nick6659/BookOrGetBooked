@@ -1,0 +1,158 @@
+﻿@using BookOrGetBooked.App.Shared.Interfaces
+@using BookOrGetBooked.Shared.DTOs.Booking
+@using BookOrGetBooked.Shared.DTOs.Service
+@using BookOrGetBooked.Shared.DTOs.BookingStatus
+@inject IBookingService BookingService
+@inject IBookingStatusService BookingStatusService
+
+@if (Visible && Service is not null)
+{
+    <div class="modal-overlay" @onclick="Close">
+        <div class="modal-content" @onclick:stopPropagation>
+            <h2>📋 Bookings for: @Service.Name</h2>
+
+            @if (Bookings is null)
+            {
+                <p>Loading bookings...</p>
+            }
+            else if (Bookings.Count == 0)
+            {
+                <p>No bookings yet for this service.</p>
+            }
+            else
+            {
+                <div class="booking-fields">
+                    @foreach (var booking in Bookings)
+                    {
+                        <div class="booking-summary">
+                            <p><strong>Booker:</strong> @booking.Original.BookerFullName</p>
+                            <p><strong>Phone:</strong> @booking.Original.BookerPhoneNumber</p>
+                            <label><strong>Time Slot:</strong></label>
+                            <input type="datetime-local" class="booking-input" @bind-value="booking.EditableTimeSlot" />
+                            <label><strong>Address:</strong></label>
+                            <input class="booking-input" @bind="booking.StreetAddress" placeholder="Street" />
+                            <input class="booking-input" @bind="booking.PostalCode" placeholder="Postal Code" />
+                            <input class="booking-input" @bind="booking.City" placeholder="City" />
+                            <input class="booking-input" @bind="booking.Country" placeholder="Country" />
+
+                            <label>Status:</label>
+                            <select class="booking-input" @onchange="e => OnStatusChanged(booking, e.Value?.ToString())">
+                                @foreach (var status in AvailableStatuses)
+                                {
+                                    <option value="@status.Id" selected="@(status.Id == booking.BookingStatusId)">@status.Name</option>
+                                }
+                            </select>
+
+                            @if (!string.IsNullOrEmpty(booking.StatusMessage))
+                            {
+                                <p class="status-message @(booking.IsSuccess ? "success" : "error")">@booking.StatusMessage</p>
+                            }
+
+                            <div class="modal-buttons">
+                                <button class="book-btn" @onclick="() => UpdateBookingAsProvider(booking)">Update</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+
+            <div class="modal-buttons">
+                <button class="cancel-btn" @onclick="Close">Close</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public ServiceResponseDTO? Service { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private List<EditableBooking> Bookings = new();
+    private List<BookingStatusSummaryDTO> AvailableStatuses = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Visible && Service is not null)
+        {
+            try
+            {
+                var raw = await BookingService.GetBookingsForServiceAsync(Service.Id);
+                AvailableStatuses = await BookingStatusService.GetAllAsync();
+                Bookings = raw.Select(b => new EditableBooking(b, AvailableStatuses)).ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error loading bookings or statuses: " + ex.Message);
+            }
+        }
+    }
+
+    private Task OnStatusChanged(EditableBooking booking, string? selectedStatusId)
+    {
+        if (int.TryParse(selectedStatusId, out var newStatusId))
+        {
+            booking.BookingStatusId = newStatusId;
+        }
+        return Task.CompletedTask;
+    }
+
+    private async Task UpdateBookingAsProvider(EditableBooking booking)
+    {
+        booking.StatusMessage = null;
+
+        try
+        {
+            var dto = new ServiceProviderBookingUpdateDTO
+            {
+                BookingStatusId = booking.BookingStatusId,
+                TimeSlot = booking.EditableTimeSlot,
+                StreetAddress = booking.StreetAddress,
+                City = booking.City,
+                PostalCode = booking.PostalCode,
+                Country = booking.Country
+            };
+
+            await BookingService.UpdateBookingAsProviderAsync(booking.Original.Id, dto);
+            booking.IsSuccess = true;
+            booking.StatusMessage = "✅ Updated successfully!";
+        }
+        catch (Exception ex)
+        {
+            booking.IsSuccess = false;
+            booking.StatusMessage = "❌ Update failed: " + ex.Message;
+        }
+    }
+
+    private async Task Close()
+    {
+        await OnClose.InvokeAsync();
+    }
+
+    private class EditableBooking
+    {
+        public EditableBooking(BookingSummaryDTO baseDto, List<BookingStatusSummaryDTO> statuses)
+        {
+            Original = baseDto;
+            EditableTimeSlot = baseDto.TimeSlot;
+            StreetAddress = baseDto.StreetAddress;
+            City = baseDto.City;
+            PostalCode = baseDto.PostalCode;
+            Country = baseDto.Country;
+            BookingStatusId = statuses.FirstOrDefault(s => s.Name == baseDto.Status)?.Id ?? 0;
+        }
+
+        public BookingSummaryDTO Original { get; set; }
+        public DateTime EditableTimeSlot { get; set; }
+        public int BookingStatusId { get; set; }
+        public string StreetAddress { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
+        public string PostalCode { get; set; } = string.Empty;
+        public string Country { get; set; } = string.Empty;
+        public bool IsSuccess { get; set; }
+        public string? StatusMessage { get; set; }
+
+        public string BookerFullName => Original.BookerFullName;
+        public string BookerPhoneNumber => Original.BookerPhoneNumber;
+    }
+}

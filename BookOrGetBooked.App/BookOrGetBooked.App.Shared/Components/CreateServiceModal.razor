@@ -1,0 +1,203 @@
+﻿@using BookOrGetBooked.App.Shared.Interfaces
+@using BookOrGetBooked.Shared.DTOs.Service
+@using BookOrGetBooked.Shared.DTOs.ServiceType
+@using BookOrGetBooked.Shared.DTOs.Currency
+@inject IServiceService ServiceService
+@inject IServiceTypeService ServiceTypeService
+@inject ICurrencyService CurrencyService
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+@if (Visible)
+{
+    <div class="modal-overlay" @onclick="Close">
+        <div class="modal-content" @onclick:stopPropagation>
+            <h2>➕ Add New Service</h2>
+
+            <div class="booking-fields">
+                <label>Name:</label>
+                <input type="text" @bind="ServiceName" class="booking-input" />
+
+                <label>Description:</label>
+                <textarea @bind="Description" class="booking-input"></textarea>
+
+                <label>Price:</label>
+                <input type="number" step="0.01" @bind="Price" class="booking-input" />
+
+                <label>Service Type:</label>
+                <select @bind="SelectedServiceTypeId" class="booking-input">
+                    @foreach (var type in ServiceTypes)
+                    {
+                        <option value="@type.Id">@type.Name</option>
+                    }
+                </select>
+
+                <button class="autofill-btn" @onclick="() => ShowCustomTypeInput = true">+ Create Custom Type</button>
+
+                @if (ShowCustomTypeInput)
+                {
+                    <input type="text" class="booking-input" @bind="NewCustomTypeName" placeholder="Enter custom type name" />
+                    <button class="book-btn" @onclick="CreateCustomServiceType">Add Type</button>
+                }
+
+                <label>Currency:</label>
+                <select @bind="SelectedCurrencyId" class="booking-input">
+                    @foreach (var currency in Currencies)
+                    {
+                        <option value="@currency.Id">@currency.Code (@currency.Symbol)</option>
+                    }
+                </select>
+            </div>
+
+            @if (!string.IsNullOrEmpty(StatusMessage))
+            {
+                <p class="status-message @(IsSuccess ? "success" : "error")">@StatusMessage</p>
+            }
+
+            <div class="modal-buttons">
+                <button class="book-btn" @onclick="AddService">Add</button>
+                <button class="cancel-btn" @onclick="Close">Cancel</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private string ServiceName = string.Empty;
+    private string Description = string.Empty;
+    private decimal Price;
+
+    private int SelectedServiceTypeId;
+    private List<ServiceTypeResponseDTO> ServiceTypes = new();
+
+    private int SelectedCurrencyId;
+    private List<CurrencyResponseDTO> Currencies = new();
+
+    private string? StatusMessage;
+    private bool IsSuccess;
+
+    private bool ShowCustomTypeInput = false;
+    private string NewCustomTypeName = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await LoadServiceTypes();
+            await LoadCurrencies();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error loadin ServiceTypes and Currencies: " + ex.Message);
+        }
+    }
+
+    private async Task LoadServiceTypes()
+    {
+        var user = await AuthService.GetCurrentUserAsync();
+        if (user is null) return;
+
+        ServiceTypes = await ServiceTypeService.GetAvailableForUserAsync(user.Id);
+        if (ServiceTypes.Any())
+        {
+            SelectedServiceTypeId = ServiceTypes.First().Id;
+        }
+    }
+
+    private async Task LoadCurrencies()
+    {
+        Currencies = await CurrencyService.GetAllAsync();
+        if (Currencies.Any())
+        {
+            SelectedCurrencyId = Currencies.First().Id;
+        }
+    }
+
+    private async Task AddService()
+    {
+        try
+        {
+            var user = await AuthService.GetCurrentUserAsync();
+            if (user is null)
+            {
+                StatusMessage = "User not authenticated.";
+                IsSuccess = false;
+                return;
+            }
+
+            var newService = new ServiceCreateDTO
+            {
+                Name = ServiceName,
+                Description = Description,
+                Price = Price,
+                ProviderId = user.Id,
+                ServiceTypeId = SelectedServiceTypeId,
+                CurrencyId = SelectedCurrencyId
+            };
+
+            var success = await ServiceService.CreateServiceAsync(newService);
+
+            if (success)
+            {
+                StatusMessage = "✅ Service created!";
+                IsSuccess = true;
+                await Task.Delay(1000);
+                await Close();
+            }
+            else
+            {
+                StatusMessage = "❌ Failed to create service.";
+                IsSuccess = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"❌ Error: {ex.Message}";
+            IsSuccess = false;
+        }
+    }
+
+    private async Task CreateCustomServiceType()
+    {
+        try
+        {
+            var user = await AuthService.GetCurrentUserAsync();
+            if (user is null) return;
+
+            var newType = new ServiceTypeCreateDTO
+            {
+                Name = NewCustomTypeName,
+                IsSystemDefined = false,
+                CreatedByUserId = user.Id
+            };
+
+            var result = await ServiceTypeService.CreateAsync(newType);
+
+            if (result is not null)
+            {
+                ServiceTypes.Add(result);
+                SelectedServiceTypeId = result.Id;
+                NewCustomTypeName = string.Empty;
+                ShowCustomTypeInput = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"❌ Failed to create type: {ex.Message}";
+            IsSuccess = false;
+        }
+    }
+
+    private async Task Close()
+    {
+        StatusMessage = null;
+        IsSuccess = false;
+        ServiceName = Description = string.Empty;
+        Price = 0;
+        ShowCustomTypeInput = false;
+        await OnClose.InvokeAsync();
+    }
+}

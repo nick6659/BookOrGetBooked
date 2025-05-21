@@ -56,7 +56,15 @@ namespace BookOrGetBooked.Infrastructure.Data.SeedData.SeedServices
                     Id = "b5d466dd-128d-426b-93ac-1177fe1f26fe", // Matches ProviderId in services.json
                     UserName = "admin",
                     Email = "admin@example.com",
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    FirstName = "Admin",
+                    LastName = "Adminsen",
+                    Address = "Adminvej 24",
+                    City = "Adminby",
+                    PostalCode = "1234",
+                    Country = "Denmark",
+                    PhoneNumber = "+4512345678",
+                    PhoneNumberConfirmed = true
                 };
 
                 var result = _userManager.CreateAsync(newUser, "Admin@123").Result;

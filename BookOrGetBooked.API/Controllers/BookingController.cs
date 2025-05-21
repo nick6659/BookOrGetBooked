@@ -2,11 +2,13 @@
 using BookOrGetBooked.Shared.DTOs.Booking;
 using BookOrGetBooked.Shared.Filters;
 using BookOrGetBooked.Shared.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace BookOrGetBooked.API.Controllers;
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class BookingController(
@@ -95,6 +97,43 @@ public class BookingController(
 
         return Ok(result.Data);
     }
+
+    [HttpPatch("{id}/provider")]
+    public async Task<IActionResult> UpdateBookingByProvider(int id, [FromBody] ServiceProviderBookingUpdateDTO dto)
+    {
+        var result = await bookingService.UpdateBookingByProviderAsync(id, dto);
+
+        if (!result.IsSuccess)
+        {
+            if (result.Error?.Code == ErrorCodes.Resource.NotFound)
+                return NotFound(new { message = result.Error });
+
+            return StatusCode(500, result);
+        }
+
+        return Ok(result.Data);
+    }
+
+    /*
+    [HttpPatch("{id}/status")]
+    public async Task<IActionResult> ChangeBookingStatus(int id, [FromBody] BookingStatusChangeDTO request)
+    {
+        if (request.BookingStatusId <= 0)
+            return BadRequest(new { message = "Invalid status ID" });
+
+        var result = await bookingService.ChangeBookingStatusAsync(id, request.BookingStatusId);
+
+        if (!result.IsSuccess)
+        {
+            if (result.Error?.Code == ErrorCodes.Resource.NotFound)
+                return NotFound(new { message = result.Error });
+
+            return StatusCode(500, result);
+        }
+
+        return Ok(result.Data);
+    }
+    */
 
     /*
     // GET: api/booking

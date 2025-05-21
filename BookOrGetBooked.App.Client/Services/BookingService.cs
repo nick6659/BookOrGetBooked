@@ -1,6 +1,10 @@
 ﻿using BookOrGetBooked.App.Shared.Interfaces;
 using BookOrGetBooked.Shared.DTOs.Booking;
+using BookOrGetBooked.Shared.DTOs.General;
 using BookOrGetBooked.Shared.DTOs.Service;
+using BookOrGetBooked.Shared.Filters;
+using BookOrGetBooked.Shared.Utilities;
+using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 
 namespace BookOrGetBooked.App.Client.Services
@@ -34,10 +38,52 @@ namespace BookOrGetBooked.App.Client.Services
             throw new HttpRequestException("Failed to load services.");
         }
 
-        public async Task CreateBookingAsync(BookingCreateDTO booking)
+        public async Task<ResultDto<BookingSummaryDTO>> CreateBookingAsync(BookingCreateDTO booking)
         {
             var response = await _httpClient.PostAsJsonAsync("api/booking", booking);
-            response.EnsureSuccessStatusCode(); // Will throw if not 2xx
+
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<ResultDto<BookingSummaryDTO>>();
+
+            if (result == null)
+                throw new Exception("Failed to deserialize booking result.");
+
+            return result;
         }
+
+        public async Task<List<BookingSummaryDTO>> GetBookingsForServiceAsync(int serviceId)
+        {
+            var filter = new BookingFilterParameters
+            {
+                ServiceId = serviceId
+            };
+
+            var response = await _httpClient.PostAsJsonAsync("api/booking/filter", filter);
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<ResultDto<IEnumerable<BookingSummaryDTO>>>();
+            return result?.Data?.ToList() ?? new();
+        }
+
+        public async Task<ResultDto<BookingSummaryDTO>> UpdateBookingAsync(int id, BookingUpdateDTO updateDto)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/booking/{id}", updateDto);
+
+            response.EnsureSuccessStatusCode();
+
+            var result = await response.Content.ReadFromJsonAsync<ResultDto<BookingSummaryDTO>>();
+            if (result == null)
+                throw new Exception("Failed to deserialize updated booking result.");
+
+            return result;
+        }
+
+        public async Task UpdateBookingAsProviderAsync(int bookingId, ServiceProviderBookingUpdateDTO updateDto)
+        {
+            var response = await _httpClient.PatchAsJsonAsync($"api/booking/{bookingId}/provider", updateDto);
+            response.EnsureSuccessStatusCode();
+        }
+
     }
 }

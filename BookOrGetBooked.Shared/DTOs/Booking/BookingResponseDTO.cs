@@ -5,7 +5,7 @@ namespace BookOrGetBooked.Shared.DTOs.Booking
 {
     public class BookingResponseDTO
     {
-        public int Id { get; set; }
+        public string Id { get; set; } = string.Empty;
         public int BookerId { get; set; }
         public DateTime TimeSlot { get; set; }
         public required ServiceResponseDTO Service { get; set; }
