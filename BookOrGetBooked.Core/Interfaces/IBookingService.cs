@@ -9,7 +9,7 @@ namespace BookOrGetBooked.Core.Interfaces
     {
         Task<Result<BookingSummaryDTO>> CreateBookingAsync(BookingCreateDTO bookingRequest);
         Task<Result<BookingResponseDTO>> GetBookingAsync(int bookingId);
-        Task<Result<IEnumerable<BookingResponseDTO>>> GetBookingsAsync(BookingFilterParameters filters);
+        Task<Result<IEnumerable<BookingSummaryDTO>>> GetBookingsAsync(BookingFilterParameters filters);
         Task<Result<BookingResponseDTO>> UpdateBookingAsync(int id, BookingUpdateDTO bookingUpdateRequest);
         Task<Result<BookingResponseDTO>> UpdateBookingByProviderAsync(int bookingId, ServiceProviderBookingUpdateDTO dto);
     }

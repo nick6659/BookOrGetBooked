@@ -102,6 +102,8 @@ namespace BookOrGetBooked.API
             builder.Services.AddScoped<ICurrencyService, CurrencyService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<IBookingStatusRepository, BookingStatusRepository>();
+            builder.Services.AddScoped<IBookingStatusService, BookingStatusService>();
 
             builder.Services.AddHttpClient<IGoogleDistanceService, GoogleDistanceService>();
 

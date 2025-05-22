@@ -52,19 +52,16 @@ public class BookingController(
             if (result.Error != null)
             {
                 if (ErrorCodes.Validation.Messages.ContainsKey(result.Error.Code))
-                {
-                    return BadRequest(result); // Return 400 Bad Request with validation errors
-                }
+                    return BadRequest(result);
+
                 if (result.Error.Code == ErrorCodes.Resource.NotFound)
-                {
-                    return NotFound(result); // Return 404 Not Found
-                }
+                    return NotFound(result);
             }
 
-            return StatusCode(500, result); // Return 500 Internal Server Error
+            return StatusCode(500, result);
         }
 
-        return Ok(result.Data);
+        return Ok(result);
     }
 
     // PUT: api/booking/{id}

@@ -1,9 +1,9 @@
-﻿using BookOrGetBooked.App.Shared.Interfaces;
+﻿using BookOrGetBooked.App.Shared.Constants;
+using BookOrGetBooked.App.Shared.Interfaces;
 using BookOrGetBooked.Shared.DTOs.Auth;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Net;
-using System.Text.Json;
 
 namespace BookOrGetBooked.App.Client.Services.Http;
 
@@ -20,58 +20,34 @@ public class RefreshTokenHandler : DelegatingHandler
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        try
+        request.Options.TryGetValue(HttpRequestOptionsKeys.AccessToken, out var accessToken);
+        request.Options.TryGetValue(HttpRequestOptionsKeys.RefreshToken, out var refreshToken);
+
+        if (!string.IsNullOrWhiteSpace(accessToken))
         {
-            string? accessToken = null;
-            try
-            {
-                accessToken = await _tokenStorage.GetAccessTokenAsync();
-                if (!string.IsNullOrWhiteSpace(accessToken))
-                {
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                }
-            }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine("Token unavailable (likely prerender): " + ex.Message);
-            }
-
-            var response = await base.SendAsync(request, cancellationToken);
-
-            // If Unauthorized, Try Refresh Token
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                try
-                {
-                    var refreshToken = await _tokenStorage.GetRefreshTokenAsync();
-                    if (!string.IsNullOrWhiteSpace(refreshToken) && !string.IsNullOrWhiteSpace(accessToken))
-                    {
-                        var refreshResponse = await TryRefreshTokenAsync(accessToken, refreshToken);
-
-                        if (!string.IsNullOrWhiteSpace(refreshResponse?.Token) &&
-                            !string.IsNullOrWhiteSpace(refreshResponse.RefreshToken))
-                        {
-                            await _tokenStorage.SaveTokensAsync(refreshResponse.Token, refreshResponse.RefreshToken);
-
-                            // Retry original request with new token
-                            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", refreshResponse.Token);
-                            response = await base.SendAsync(request, cancellationToken);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Refresh failed: " + ex.Message);
-                }
-            }
-
-            return response;
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         }
-        catch (HttpRequestException ex)
+
+        var response = await base.SendAsync(request, cancellationToken);
+
+        // If Unauthorized, try refreshing token
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
-            Console.WriteLine("API connection failed: " + ex.Message);
-            throw new InvalidOperationException("Unable to reach the server. Please try again later.", ex);
+            if (!string.IsNullOrWhiteSpace(accessToken) && !string.IsNullOrWhiteSpace(refreshToken))
+            {
+                var refreshResponse = await TryRefreshTokenAsync(accessToken, refreshToken);
+                if (!string.IsNullOrWhiteSpace(refreshResponse?.Token) && !string.IsNullOrWhiteSpace(refreshResponse.RefreshToken))
+                {
+                    await _tokenStorage.SaveTokensAsync(refreshResponse.Token, refreshResponse.RefreshToken);
+
+                    // Retry original request with new token
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", refreshResponse.Token);
+                    response = await base.SendAsync(request, cancellationToken);
+                }
+            }
         }
+
+        return response;
     }
 
     private async Task<TokenResponseDto?> TryRefreshTokenAsync(string expiredToken, string refreshToken)
@@ -79,7 +55,6 @@ public class RefreshTokenHandler : DelegatingHandler
         try
         {
             var client = _httpClientFactory.CreateClient(nameof(IAuthService));
-
             var refreshRequest = new RefreshTokenRequestDto
             {
                 Token = expiredToken,

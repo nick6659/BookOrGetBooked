@@ -25,23 +25,40 @@
                     @foreach (var booking in Bookings)
                     {
                         <div class="booking-summary">
-                            <p><strong>Booker:</strong> @booking.Original.BookerFullName</p>
-                            <p><strong>Phone:</strong> @booking.Original.BookerPhoneNumber</p>
-                            <label><strong>Time Slot:</strong></label>
-                            <input type="datetime-local" class="booking-input" @bind-value="booking.EditableTimeSlot" />
-                            <label><strong>Address:</strong></label>
-                            <input class="booking-input" @bind="booking.StreetAddress" placeholder="Street" />
-                            <input class="booking-input" @bind="booking.PostalCode" placeholder="Postal Code" />
-                            <input class="booking-input" @bind="booking.City" placeholder="City" />
-                            <input class="booking-input" @bind="booking.Country" placeholder="Country" />
+                            <div class="field-row">
+                                <label>Booker:</label>
+                                <span>@booking.Original.BookerFullName</span>
+                            </div>
 
-                            <label>Status:</label>
-                            <select class="booking-input" @onchange="e => OnStatusChanged(booking, e.Value?.ToString())">
-                                @foreach (var status in AvailableStatuses)
-                                {
-                                    <option value="@status.Id" selected="@(status.Id == booking.BookingStatusId)">@status.Name</option>
-                                }
-                            </select>
+                            <div class="field-row">
+                                <label>Phone:</label>
+                                <span>@booking.Original.BookerPhoneNumber</span>
+                            </div>
+
+                            <div class="field-column">
+                                <label><strong>Address:</strong></label>
+                                <input class="booking-input" @bind="booking.StreetAddress" placeholder="Street" />
+                                <div class="field-row">
+                                    <input class="booking-input" @bind="booking.PostalCode" placeholder="Postal Code" />
+                                    <input class="booking-input" @bind="booking.City" placeholder="City" />
+                                </div>
+                                <input class="booking-input" @bind="booking.Country" placeholder="Country" />
+                            </div>
+
+                            <div class="field-row">
+                                <label>Status:</label>
+                                <select class="booking-input" @onchange="e => OnStatusChanged(booking, e.Value?.ToString())">
+                                    @foreach (var status in AvailableStatuses)
+                                    {
+                                        <option value="@status.Id" selected="@(status.Id == booking.BookingStatusId)">@status.Name</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="field-row">
+                                <label>Time Slot:</label>
+                                <input type="datetime-local" class="booking-input" @bind-value="booking.EditableTimeSlot" />
+                            </div>
 
                             @if (!string.IsNullOrEmpty(booking.StatusMessage))
                             {
@@ -50,15 +67,12 @@
 
                             <div class="modal-buttons">
                                 <button class="book-btn" @onclick="() => UpdateBookingAsProvider(booking)">Update</button>
+                                <button class="cancel-btn" @onclick="Close">Close</button>
                             </div>
                         </div>
                     }
                 </div>
             }
-
-            <div class="modal-buttons">
-                <button class="cancel-btn" @onclick="Close">Close</button>
-            </div>
         </div>
     </div>
 }

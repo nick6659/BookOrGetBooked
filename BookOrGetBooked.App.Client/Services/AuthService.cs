@@ -1,9 +1,8 @@
-﻿using BookOrGetBooked.App.Shared.Interfaces;
+﻿using BookOrGetBooked.App.Shared.Constants;
+using BookOrGetBooked.App.Shared.Interfaces;
 using BookOrGetBooked.Shared.DTOs.Auth;
 using BookOrGetBooked.Shared.DTOs.General;
 using BookOrGetBooked.Shared.DTOs.User;
-using BookOrGetBooked.Shared.Utilities;
-using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
@@ -79,14 +78,12 @@ namespace BookOrGetBooked.App.Client.Services
             if (string.IsNullOrWhiteSpace(accessToken))
                 return false;
 
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/profile/me");
+            request.Options.Set(HttpRequestOptionsKeys.AccessToken, accessToken);
+            request.Options.Set(HttpRequestOptionsKeys.RefreshToken, refreshToken);
 
-            var test = await _httpClient.GetAsync("api/profile/me");
-
-            if (test.StatusCode == HttpStatusCode.Unauthorized)
-                return await TryRefreshTokenAsync();
-
-            return test.IsSuccessStatusCode;
+            var response = await _httpClient.SendAsync(request);
+            return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> TryRefreshTokenAsync()
@@ -97,13 +94,19 @@ namespace BookOrGetBooked.App.Client.Services
             if (string.IsNullOrWhiteSpace(accessToken) || string.IsNullOrWhiteSpace(refreshToken))
                 return false;
 
-            var payload = new RefreshTokenRequestDto
+            var request = new HttpRequestMessage(HttpMethod.Post, "api/auth/refresh-token")
             {
-                Token = accessToken,
-                RefreshToken = refreshToken
+                Content = JsonContent.Create(new RefreshTokenRequestDto
+                {
+                    Token = accessToken,
+                    RefreshToken = refreshToken
+                })
             };
 
-            var response = await _httpClient.PostAsJsonAsync("api/auth/refresh-token", payload);
+            request.Options.Set(HttpRequestOptionsKeys.AccessToken, accessToken);
+            request.Options.Set(HttpRequestOptionsKeys.RefreshToken, refreshToken);
+
+            var response = await _httpClient.SendAsync(request);
 
             if (!response.IsSuccessStatusCode)
                 return false;
@@ -125,11 +128,21 @@ namespace BookOrGetBooked.App.Client.Services
 
         public async Task<CurrentUserDTO?> GetCurrentUserAsync()
         {
-            var restored = await TryRestoreSessionAsync();
-            if (!restored)
+            var accessToken = await _tokenStorage.GetAccessTokenAsync();
+            var refreshToken = await _tokenStorage.GetRefreshTokenAsync();
+
+            if (string.IsNullOrWhiteSpace(accessToken))
                 return null;
 
-            return await _httpClient.GetFromJsonAsync<CurrentUserDTO>("api/auth/me");
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/auth/me");
+            request.Options.Set(HttpRequestOptionsKeys.AccessToken, accessToken);
+            request.Options.Set(HttpRequestOptionsKeys.RefreshToken, refreshToken);
+
+            var response = await _httpClient.SendAsync(request);
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            return await response.Content.ReadFromJsonAsync<CurrentUserDTO>();
         }
 
     }

@@ -1,30 +1,37 @@
 [
   {
     "Id": 1,
-    "Name": "Consulting"
+    "Name": "Consulting",
+    "IsSystemDefined": true
   },
   {
     "Id": 2,
-    "Name": "Healthcare"
+    "Name": "Healthcare",
+    "IsSystemDefined": true
   },
   {
     "Id": 3,
-    "Name": "Coaching"
+    "Name": "Coaching",
+    "IsSystemDefined": true
   },
   {
     "Id": 4,
-    "Name": "Legal Advice"
+    "Name": "Legal Advice",
+    "IsSystemDefined": true
   },
   {
     "Id": 5,
-    "Name": "Technical Support"
+    "Name": "Technical Support",
+    "IsSystemDefined": true
   },
   {
     "Id": 6,
-    "Name": "Beauty & Wellness"
+    "Name": "Beauty & Wellness",
+    "IsSystemDefined": true
   },
   {
     "Id": 7,
-    "Name": "Home Services"
+    "Name": "Home Services",
+    "IsSystemDefined": true
   }
 ]

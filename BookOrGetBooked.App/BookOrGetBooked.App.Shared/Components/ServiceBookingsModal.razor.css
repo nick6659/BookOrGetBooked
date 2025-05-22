@@ -1,0 +1,31 @@
+.field-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 1rem;
+}
+
+.field-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 0.5rem;
+}
+
+    .field-row label {
+        font-weight: bold;
+        min-width: 100px;
+    }
+
+    .field-row input,
+    .field-row select,
+    .field-row span {
+        flex: 1;
+        min-width: 120px;
+        margin-bottom: 4px;
+    }
+
+.booking-input {
+    flex: 1;
+    min-width: 120px;
+}

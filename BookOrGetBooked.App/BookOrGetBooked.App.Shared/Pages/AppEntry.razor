@@ -23,7 +23,7 @@
                 else
                     Navigation.NavigateTo("/login", forceLoad: true);
             }
-            catch (Exception ex)
+            catch
             {
                 // Show modal if API is unreachable or anything fails
                 if (errorModal != null)

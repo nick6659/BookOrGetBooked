@@ -14,7 +14,7 @@
     <div class="page-header @(isHeaderHidden ? "hide" : "")" @ref="stickyHeaderRef">
         <h1 class="page-title">📈 My Services</h1>
         <input class="search-box" type="text" value="@searchQuery" @oninput="OnSearchInput" placeholder="Search your services..." />
-        <button class="add-button" @onclick="OpenAddServiceModal">➕ Add New Service</button>
+        <button class="add-service-button" @onclick="OpenAddServiceModal">➕ Add New Service</button>
     </div>
 
     <div class="scroll-wrapper" @ref="scrollWrapperRef" @onwheel="HandleScroll">
@@ -31,9 +31,7 @@
             {
                 @foreach (var service in filteredServices)
                 {
-                    <ServiceCard Service="service">
-                        <button class="view-bookings-button" @onclick="() => OpenBookingListModal(service)">📋 See Bookings</button>
-                    </ServiceCard>
+                    <ServiceCard Service="service" OnClick="() => OpenBookingListModal(service)" />
                 }
             }
         </div>

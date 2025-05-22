@@ -16,6 +16,8 @@ namespace BookOrGetBooked.API.Mappings
 
             // Mapping from BookingStatusUpdateDTO to BookingStatus
             CreateMap<BookingStatusUpdateDTO, BookingStatus>();
+
+            CreateMap<BookingStatus, BookingStatusResponseDTO>();
         }
     }
 }

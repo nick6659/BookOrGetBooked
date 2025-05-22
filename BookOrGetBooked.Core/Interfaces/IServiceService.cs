@@ -7,6 +7,7 @@ namespace BookOrGetBooked.Core.Interfaces
 {
     public interface IServiceService
     {
+        Task<Result<ServiceResponseDTO>> CreateServiceAsync(ServiceCreateDTO serviceCreateDto);
         Task<Result<bool>> ServiceExistsAsync(int serviceId);
         Task<Result<ServiceResponseDTO>> GetServiceAsync(int serviceId);
         Task<Result<IEnumerable<ServiceResponseDTO>>> GetServicesAsync(ServiceFilterParameters filters);

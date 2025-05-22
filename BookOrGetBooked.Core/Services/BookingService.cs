@@ -64,7 +64,7 @@ public class BookingService(
         }
     }
 
-    public async Task<Result<IEnumerable<BookingResponseDTO>>> GetBookingsAsync(BookingFilterParameters filters)
+    public async Task<Result<IEnumerable<BookingSummaryDTO>>> GetBookingsAsync(BookingFilterParameters filters)
     {
         try
         {
@@ -73,7 +73,7 @@ public class BookingService(
             if (validationErrors.Count > 0)
             {
                 // Return validation errors with an appropriate error code
-                return Result<IEnumerable<BookingResponseDTO>>.Failure(ErrorCodes.Validation.ValidationError, validationErrors);
+                return Result<IEnumerable<BookingSummaryDTO>>.Failure(ErrorCodes.Validation.ValidationError, validationErrors);
             }
 
             // Step 2: Fetch bookings
@@ -81,16 +81,16 @@ public class BookingService(
 
             if (bookings == null || !bookings.Any())
             {
-                return Result<IEnumerable<BookingResponseDTO>>.Failure(ErrorCodes.Resource.NotFound);
+                return Result<IEnumerable<BookingSummaryDTO>>.Failure(ErrorCodes.Resource.NotFound);
             }
 
-            var bookingDTOs = mapper.Map<IEnumerable<BookingResponseDTO>>(bookings);
-            return Result<IEnumerable<BookingResponseDTO>>.Success(bookingDTOs);
+            var bookingDTOs = mapper.Map<IEnumerable<BookingSummaryDTO>>(bookings);
+            return Result<IEnumerable<BookingSummaryDTO>>.Success(bookingDTOs);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error occurred while fetching bookings with filters: {@Filters}", filters);
-            return Result<IEnumerable<BookingResponseDTO>>.Failure(ErrorCodes.Server.InternalServerError);
+            return Result<IEnumerable<BookingSummaryDTO>>.Failure(ErrorCodes.Server.InternalServerError);
         }
     }
 

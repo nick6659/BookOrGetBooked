@@ -1,4 +1,5 @@
-﻿using BookOrGetBooked.App.Shared.Interfaces;
+﻿using BookOrGetBooked.App.Shared.Constants;
+using BookOrGetBooked.App.Shared.Interfaces;
 using BookOrGetBooked.Shared.DTOs.Booking;
 using BookOrGetBooked.Shared.DTOs.General;
 using BookOrGetBooked.Shared.DTOs.Service;
@@ -12,15 +13,17 @@ namespace BookOrGetBooked.App.Client.Services
     public class BookingService : IBookingService
     {
         private readonly HttpClient _httpClient;
+        private readonly ITokenStorage _tokenStorage;
 
-        public BookingService(IHttpClientFactory httpClientFactory)
+        public BookingService(IHttpClientFactory httpClientFactory, ITokenStorage tokenStorage)
         {
             _httpClient = httpClientFactory.CreateClient(nameof(IBookingService));
+            _tokenStorage = tokenStorage;
         }
 
         public async Task<List<ServiceResponseDTO>> GetAvailableServicesAsync()
         {
-            var request = new
+            var requestData = new
             {
                 userId = 0,
                 includeDeleted = false,
@@ -29,7 +32,9 @@ namespace BookOrGetBooked.App.Client.Services
                 endDate = (DateTime?)null
             };
 
-            var response = await _httpClient.PostAsJsonAsync("api/service/filter", request);
+            var request = await CreateAuthorizedRequestAsync(HttpMethod.Post, "api/service/filter", requestData);
+            var response = await _httpClient.SendAsync(request);
+
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<List<ServiceResponseDTO>>() ?? new();
@@ -40,7 +45,8 @@ namespace BookOrGetBooked.App.Client.Services
 
         public async Task<ResultDto<BookingSummaryDTO>> CreateBookingAsync(BookingCreateDTO booking)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/booking", booking);
+            var request = await CreateAuthorizedRequestAsync(HttpMethod.Post, "api/booking", booking);
+            var response = await _httpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
 
@@ -54,21 +60,23 @@ namespace BookOrGetBooked.App.Client.Services
 
         public async Task<List<BookingSummaryDTO>> GetBookingsForServiceAsync(int serviceId)
         {
-            var filter = new BookingFilterParameters
-            {
-                ServiceId = serviceId
-            };
-
-            var response = await _httpClient.PostAsJsonAsync("api/booking/filter", filter);
+            var filter = new BookingFilterParameters { ServiceId = serviceId };
+            var request = await CreateAuthorizedRequestAsync(HttpMethod.Post, "api/booking/filter", filter);
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
             var result = await response.Content.ReadFromJsonAsync<ResultDto<IEnumerable<BookingSummaryDTO>>>();
-            return result?.Data?.ToList() ?? new();
+
+            if (result is null || !result.IsSuccess || result.Data is null)
+                throw new Exception("Failed to fetch bookings for service.");
+
+            return result.Data.ToList();
         }
 
         public async Task<ResultDto<BookingSummaryDTO>> UpdateBookingAsync(int id, BookingUpdateDTO updateDto)
         {
-            var response = await _httpClient.PutAsJsonAsync($"api/booking/{id}", updateDto);
+            var request = await CreateAuthorizedRequestAsync(HttpMethod.Put, $"api/booking/{id}", updateDto);
+            var response = await _httpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
 
@@ -81,9 +89,26 @@ namespace BookOrGetBooked.App.Client.Services
 
         public async Task UpdateBookingAsProviderAsync(int bookingId, ServiceProviderBookingUpdateDTO updateDto)
         {
-            var response = await _httpClient.PatchAsJsonAsync($"api/booking/{bookingId}/provider", updateDto);
+            var request = await CreateAuthorizedRequestAsync(HttpMethod.Patch, $"api/booking/{bookingId}/provider", updateDto);
+            var response = await _httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
         }
 
+        private async Task<HttpRequestMessage> CreateAuthorizedRequestAsync(HttpMethod method, string uri, object? content = null)
+        {
+            var accessToken = await _tokenStorage.GetAccessTokenAsync();
+            var refreshToken = await _tokenStorage.GetRefreshTokenAsync();
+
+            var request = new HttpRequestMessage(method, uri);
+            request.Options.Set(HttpRequestOptionsKeys.AccessToken, accessToken);
+            request.Options.Set(HttpRequestOptionsKeys.RefreshToken, refreshToken);
+
+            if (content != null)
+            {
+                request.Content = JsonContent.Create(content);
+            }
+
+            return request;
+        }
     }
 }

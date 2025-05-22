@@ -6,15 +6,23 @@
 <div class="service-card" @onclick="@HandleClick">
     <h3>@Service.Name</h3>
     <p>@Service.Description</p>
-    <p><strong>Type:</strong> @Service.ServiceType.Name</p>
-    <p><strong>Price:</strong> @Service.Currency.Symbol @Service.Price</p>
+    <span class="hint">(click to see more)</span>
+
+    <div class="service-details">
+        <p><strong>Type:</strong> @Service.ServiceType.Name</p>
+        <p><strong>Price:</strong> @Service.Currency.Symbol @Service.Price</p>
+    </div>
 </div>
 
 @code {
     [Parameter]
     public required ServiceResponseDTO Service { get; set; }
+
     [Parameter]
     public EventCallback OnClick { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
 
     private async Task HandleClick()
     {

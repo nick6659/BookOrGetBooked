@@ -9,5 +9,7 @@ public class ServiceTypeMappingProfile : MappingProfileBase
         CreateMap<ServiceType, ServiceTypeResponseDTO>();
 
         CreateMap<ServiceTypeResponseDTO, ServiceType>();
+
+        CreateMap<ServiceTypeCreateDTO, ServiceType>();
     }
 }

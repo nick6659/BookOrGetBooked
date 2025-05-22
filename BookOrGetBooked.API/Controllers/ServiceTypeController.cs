@@ -4,6 +4,7 @@ using BookOrGetBooked.Shared.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BookOrGetBooked.API.Controllers
@@ -83,11 +84,13 @@ namespace BookOrGetBooked.API.Controllers
         [HttpGet("available")]
         public async Task<IActionResult> GetAvailableForCurrentUser()
         {
-            var userId = User.FindFirst("sub")?.Value; // Or use a custom claim/key
-            if (userId == null) return Unauthorized();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized();
 
             var types = await _serviceTypeService.GetAvailableForUserAsync(userId);
             return Ok(types);
         }
+
     }
 }

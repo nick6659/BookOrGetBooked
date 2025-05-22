@@ -1,10 +1,13 @@
 ﻿using BookOrGetBooked.Core.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+using BookOrGetBooked.Shared.DTOs.Service;
 using BookOrGetBooked.Shared.Filters;
 using BookOrGetBooked.Shared.Utilities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BookOrGetBooked.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ServiceController : ControllerBase
@@ -14,6 +17,17 @@ namespace BookOrGetBooked.API.Controllers
         public ServiceController(IServiceService serviceService)
         {
             _serviceService = serviceService;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateService([FromBody] ServiceCreateDTO dto)
+        {
+            var result = await _serviceService.CreateServiceAsync(dto);
+
+            if (!result.IsSuccess)
+                return BadRequest(new { message = result.Error });
+
+            return Ok(result.Data);
         }
 
         [HttpPost("filter")]

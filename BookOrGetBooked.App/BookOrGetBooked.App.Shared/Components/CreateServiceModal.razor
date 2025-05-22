@@ -51,7 +51,9 @@
 
             @if (!string.IsNullOrEmpty(StatusMessage))
             {
-                <p class="status-message @(IsSuccess ? "success" : "error")">@StatusMessage</p>
+                <div class="modal-status-message @(IsSuccess ? "success" : "error")">
+                    @StatusMessage
+                </div>
             }
 
             <div class="modal-buttons">
@@ -82,25 +84,25 @@
     private bool ShowCustomTypeInput = false;
     private string NewCustomTypeName = "";
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        try
+        if (Visible)
         {
-            await LoadServiceTypes();
-            await LoadCurrencies();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error loadin ServiceTypes and Currencies: " + ex.Message);
+            try
+            {
+                await LoadServiceTypes();
+                await LoadCurrencies();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error loading ServiceTypes and Currencies: " + ex.Message);
+            }
         }
     }
 
     private async Task LoadServiceTypes()
     {
-        var user = await AuthService.GetCurrentUserAsync();
-        if (user is null) return;
-
-        ServiceTypes = await ServiceTypeService.GetAvailableForUserAsync(user.Id);
+        ServiceTypes = await ServiceTypeService.GetAvailableForUserAsync();
         if (ServiceTypes.Any())
         {
             SelectedServiceTypeId = ServiceTypes.First().Id;
@@ -144,7 +146,8 @@
             {
                 StatusMessage = "✅ Service created!";
                 IsSuccess = true;
-                await Task.Delay(1000);
+
+                await Task.Delay(1500);
                 await Close();
             }
             else

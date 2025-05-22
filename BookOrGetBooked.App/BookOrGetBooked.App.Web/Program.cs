@@ -36,29 +36,34 @@ namespace BookOrGetBooked.App
                 client.BaseAddress = new Uri(apiBaseUrl);
             })
                 .AddHttpMessageHandler<RefreshTokenHandler>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             builder.Services.AddHttpClient(nameof(IBookingService), client =>
             {
                 client.BaseAddress = new Uri(apiBaseUrl);
-            });
+            })
+                .AddHttpMessageHandler<RefreshTokenHandler>();
             builder.Services.AddScoped<IBookingService, BookingService>();
 
             builder.Services.AddHttpClient(nameof(IServiceService), client =>
             {
                 client.BaseAddress = new Uri(apiBaseUrl);
-            });
+            })
+                .AddHttpMessageHandler<RefreshTokenHandler>();
             builder.Services.AddScoped<IServiceService, ServiceService>();
 
             builder.Services.AddHttpClient(nameof(IBookingStatusService), client =>
             {
                 client.BaseAddress = new Uri(apiBaseUrl);
-            });
+            })
+                .AddHttpMessageHandler<RefreshTokenHandler>();
             builder.Services.AddScoped<IBookingStatusService, BookingStatusService>();
 
             builder.Services.AddHttpClient(nameof(ICurrencyService), client =>
             {
                 client.BaseAddress = new Uri(apiBaseUrl);
-            });
+            })
+                .AddHttpMessageHandler<RefreshTokenHandler>();
             builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 
             builder.Services.AddHttpClient(nameof(IUserProfileService), client =>
@@ -66,11 +71,14 @@ namespace BookOrGetBooked.App
                 client.BaseAddress = new Uri(apiBaseUrl);
             })
                 .AddHttpMessageHandler<RefreshTokenHandler>();
-
-
             builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 
-            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddHttpClient(nameof(IServiceTypeService), client =>
+            {
+                client.BaseAddress = new Uri(apiBaseUrl);
+            })
+                .AddHttpMessageHandler<RefreshTokenHandler>();
+            builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
 
             builder.Services.AddAuthentication("FakeScheme")
                 .AddScheme<AuthenticationSchemeOptions, FakeAuthHandler>("FakeScheme", _ => { });

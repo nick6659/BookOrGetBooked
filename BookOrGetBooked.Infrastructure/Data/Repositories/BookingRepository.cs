@@ -15,16 +15,22 @@ public class BookingRepository(
     public override async Task<Booking?> GetByIdAsync(int id)
     {
         return await Query()
-            .Include(b => b.Status)  // Load Status
-            .Include(b => b.Service) // Load the full Service
+            .Include(b => b.Status)
+            .Include(b => b.Service)
                 .ThenInclude(s => s!.Provider)
+            .Include(b => b.Booker)
             .FirstOrDefaultAsync(b => b.Id == id);
     }
 
     public async Task<IEnumerable<Booking>> GetBookingsAsync(BookingFilterParameters filters)
     {
         // Start building the query
-        var query = Query().AsNoTracking();
+        var query = Query()
+            .Include(b => b.Status)
+            .Include(b => b.Service)
+            .ThenInclude(s => s!.Provider)
+            .Include(b => b.Booker)
+            .AsNoTracking();
 
         // Apply filters
         query = ApplyFilters(query, filters);
