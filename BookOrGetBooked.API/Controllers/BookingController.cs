@@ -111,40 +111,4 @@ public class BookingController(
         return Ok(result.Data);
     }
 
-    /*
-    [HttpPatch("{id}/status")]
-    public async Task<IActionResult> ChangeBookingStatus(int id, [FromBody] BookingStatusChangeDTO request)
-    {
-        if (request.BookingStatusId <= 0)
-            return BadRequest(new { message = "Invalid status ID" });
-
-        var result = await bookingService.ChangeBookingStatusAsync(id, request.BookingStatusId);
-
-        if (!result.IsSuccess)
-        {
-            if (result.Error?.Code == ErrorCodes.Resource.NotFound)
-                return NotFound(new { message = result.Error });
-
-            return StatusCode(500, result);
-        }
-
-        return Ok(result.Data);
-    }
-    */
-
-    /*
-    // GET: api/booking
-    public async Task<IActionResult> GetAllBookingsByUserId(int id)
-    {
-        var result = await _bookingService.GetAllBookingsByUserId(id);
-
-        if (!result.IsSuccess)
-        {
-            return NotFound(new { message = result.Error });
-        }
-
-        return Ok(result.Data);
-    }
-    */
-
 }
